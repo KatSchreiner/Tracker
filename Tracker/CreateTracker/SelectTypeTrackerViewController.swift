@@ -8,7 +8,11 @@
 import UIKit
 
 final class SelectTypeTrackerViewController: UIViewController {
-        
+   
+    // MARK: - Public Properties
+    weak var delegate: CreateTrackerDelegate?
+    
+    // MARK: - Private Properties
     private lazy var addNewHabit: UIButton = {
         let addNewHabit = UIButton(type: .custom)
         addNewHabit.setTitle("Привычка", for: .normal)
@@ -39,7 +43,8 @@ final class SelectTypeTrackerViewController: UIViewController {
         stackView.distribution = .fillEqually
         return stackView
     }()
-    var typeTracker: TypeTracker?
+    
+    // MARK: -
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -47,11 +52,13 @@ final class SelectTypeTrackerViewController: UIViewController {
     
     @objc private func didTapCreateNewHabit() {
         let createNewHabit = CreateNewHabitViewController()
+        createNewHabit.createTrackerDelegate = delegate
         navigationController?.pushViewController(createNewHabit, animated: true)
     }
     
     @objc private func didTapCreateNewIrregularEvent() {
         let createNewSchedule = CreateNewEventViewController()
+        createNewSchedule.createTrackerDelegate = delegate
         navigationController?.pushViewController(createNewSchedule, animated: true)
     }
     

@@ -8,6 +8,8 @@
 import UIKit
 
 class ScheduleTableCell: UITableViewCell {
+    static let cell = "ScheduleTableCell"
+    
     lazy var daySwitch: UISwitch = {
         let daySwitch = UISwitch()
         daySwitch.setOn(false, animated: true)

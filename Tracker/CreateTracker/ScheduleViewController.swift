@@ -12,12 +12,11 @@ protocol ScheduleViewControllerDelegate: AnyObject {
 }
 
 class ScheduleViewController: UIViewController {
+    weak var scheduleDelegate: ScheduleViewControllerDelegate?
     
     private var weekDays: [WeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
-    private let reuseIdentifier = "ScheduleTableCell"
-    weak var scheduleDelegate: ScheduleViewControllerDelegate?
-    var selectedDays: [WeekDay] = []
-
+    
+    var selectedDays = [WeekDay]()
     
     // MARK: - Private Properties
     private lazy var tableView: UITableView = {
@@ -26,7 +25,9 @@ class ScheduleViewController: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(ScheduleTableCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.allowsSelection = false
+        tableView.isScrollEnabled = false
+        tableView.register(ScheduleTableCell.self, forCellReuseIdentifier: ScheduleTableCell.cell)
         return tableView
     }()
     
@@ -113,7 +114,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! ScheduleTableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableCell.cell, for: indexPath) as! ScheduleTableCell
         
         configureCell(cell: cell, indexPath: indexPath)
         
@@ -127,15 +128,4 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-
-}
-
-enum WeekDay: String {
-    case monday = "Пн"
-    case tuesday = "Вт"
-    case wednesday = "Ср"
-    case thursday = "Чт"
-    case friday = "Пт"
-    case saturday = "Сб"
-    case sunday = "Вс"
 }

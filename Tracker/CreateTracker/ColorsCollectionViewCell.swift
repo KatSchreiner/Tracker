@@ -14,9 +14,16 @@ final class ColorsCollectionViewCell: UICollectionViewCell {
     var colorView: UIView = {
         let colorView = UIView()
         colorView.layer.cornerRadius = 8
-        
         return colorView
     }()
+    
+    override var isSelected: Bool {
+        didSet {
+            self.layer.cornerRadius = 8
+            self.layer.borderWidth = self.isSelected ? 3 : 0
+            self.layer.borderColor = self.isSelected ? colorView.backgroundColor?.withAlphaComponent(0.3).cgColor : UIColor.clear.cgColor
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

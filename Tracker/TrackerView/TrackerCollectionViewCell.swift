@@ -7,9 +7,25 @@
 
 import UIKit
 
+protocol TrackerCompletionDelegate: AnyObject {
+    func didUpdateTrackerCompletion(trackerId: UUID, indexPath: IndexPath, isTrackerCompleted: Bool)
+}
+
 class TrackerCollectionViewCell: UICollectionViewCell {
     
-    static var trackerCell = "TrackerCell"
+    static var identifier = "TrackerCell"
+    weak var delegate: TrackerCompletionDelegate?
+    
+    private var trackerId: UUID?
+    private var indexPath: IndexPath?
+    
+    var isTrackerCompleted: Bool = false
+    
+    var daysCount: Int = 0 {
+        didSet {
+            updateDaysCountLabel()
+        }
+    }
     
     lazy var titleLabelCell: UILabel = {
         let titleLabelCell = UILabel()
@@ -39,34 +55,63 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     
     lazy var addButtonCell: UIButton = {
         let addButtonCell = UIButton()
-        let image = UIImage(named: "plus")
-        addButtonCell.setImage(UIImage(systemName: "plus"), for: .normal)
-        addButtonCell.backgroundColor = .green
         addButtonCell.layer.cornerRadius = 17
         addButtonCell.tintColor = .ypWhiteDay
-        addButtonCell.addTarget(self, action: #selector(didChangeAddButtonCell), for: .touchUpInside)
+        addButtonCell.addTarget(self, action: #selector(didTapCompletedTrackers), for: .touchUpInside)
         return addButtonCell
     }()
     
     lazy var bodyView: UIView = {
         let bodyView = UIView()
         bodyView.layer.cornerRadius = 16
-        bodyView.backgroundColor = .ypRed
         return bodyView
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setupView()
-    }
-    
-    @objc private func didChangeAddButtonCell() {
-        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configureAddButton(tracker: Tracker, indexPath: IndexPath, completedForCurrentDate: Int, isTrackerCompleted: Bool) {
+        self.isTrackerCompleted = isTrackerCompleted
+        self.trackerId = tracker.id
+        self.indexPath = indexPath
+                
+        titleLabelCell.text = tracker.name
+        emojiLabelCell.text = tracker.emoji
+        bodyView.backgroundColor = tracker.color
+        addButtonCell.backgroundColor = tracker.color
+        daysCount = completedForCurrentDate
+        
+        let image = isTrackerCompleted ? "checkmark" : "plus"
+        addButtonCell.setImage(UIImage(systemName: image), for: .normal)
+        addButtonCell.backgroundColor = isTrackerCompleted ? bodyView.backgroundColor?.withAlphaComponent(0.3) : bodyView.backgroundColor
+    }
+    
+    func updateDaysCountLabel() {
+        var days: String
+        switch daysCount % 10 {
+        case 1:
+            days = "день"
+        case 2, 3, 4:
+            days = "дня"
+        default:
+            days = "дней"
+        }
+        daysCountLabelCell.text = String(daysCount) + " " + days
+    }
+    
+    @objc func didTapCompletedTrackers() {
+        guard let trackerId, let indexPath = indexPath else { return }
+        if isTrackerCompleted {
+            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: false)
+        } else {
+            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: true)
+        }
     }
     
     private func setupView() {

@@ -13,6 +13,6 @@ final class CreateNewHabitViewController: CreateNewTrackerViewController {
         super.viewDidLoad()
         self.title = "Новая привычка"
         view.backgroundColor = .white
-        //        navigationItem.hidesBackButton = true
+        navigationItem.hidesBackButton = true
     }
 }

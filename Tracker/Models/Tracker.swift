@@ -5,12 +5,22 @@
 //  Created by Екатерина Шрайнер on 23.06.2024.
 //
 
-import Foundation
+import UIKit
 
 struct Tracker {
-    let id: Int
+    let id: UUID
     let name: String
-    let color: String
+    let color: UIColor
     let emoji: String
-    let schedule: [(day: String, timeSlots: [TimeInterval])]
+    let schedule: [WeekDay]
+    let typeTracker: TypeTracker
+    
+    init(id: UUID, name: String, color: UIColor, emoji: String, schedule: [WeekDay], typeTracker: TypeTracker) {
+        self.id = id
+        self.name = name
+        self.color = color
+        self.emoji = emoji
+        self.schedule = schedule
+        self.typeTracker = typeTracker
+    }
 }

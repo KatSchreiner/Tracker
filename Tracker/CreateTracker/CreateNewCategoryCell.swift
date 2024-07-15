@@ -12,10 +12,17 @@ enum TypeTracker {
     case event
 }
 
+protocol SelectedWeekDaysDelegate: AnyObject {
+    func sendSelectedWeekDays(_ selectedDays: [WeekDay])
+}
+
 final class CreateNewCategoryCell: UICollectionViewCell {
+    
     static let newCategoryIdentifier = "newCategoryCell"
     
-    var selectedDays: [WeekDay] = []
+    weak var weekDaysDelegate: SelectedWeekDaysDelegate?
+            
+    var selectedWeekDays = [WeekDay]()
     var selectedCategory = ""
     
     var cellTitles = ["Категория", "Расписание"]
@@ -87,8 +94,12 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
             case "Категория":
                 cell.detailTextLabel?.text = selectedCategory
             case "Расписание":
-                let selectedDaysText = selectedDays.map { $0.rawValue }.joined(separator: ", ")
-                cell.detailTextLabel?.text = selectedDaysText
+                if selectedWeekDays.count == 7 {
+                    cell.detailTextLabel?.text = "Каждый день"
+                } else {
+                    let selectedDaysText = selectedWeekDays.map { $0.rawValue }.joined(separator: ", ")
+                    cell.detailTextLabel?.text = selectedDaysText
+                }
                 
             default:
                 break
@@ -129,7 +140,16 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
 // MARK: - ScheduleViewControllerDelegate
 extension CreateNewCategoryCell: ScheduleViewControllerDelegate {
     func sendSelectedDays(selectedDays: [WeekDay]) {
-        self.selectedDays = selectedDays
+        self.selectedWeekDays = selectedDays
+        
+        weekDaysDelegate?.sendSelectedWeekDays(selectedDays)
+
+        if selectedDays.count == 7 {
+            tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "Каждый день"
+        } else {
+            let selectedDaysText = selectedDays.map { $0.rawValue }.joined(separator: ", ")
+            tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = selectedDaysText
+        }
         tableView.reloadData()
     }
 }

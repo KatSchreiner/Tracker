@@ -17,6 +17,13 @@ final class EmojiesCollectionViewCell: UICollectionViewCell {
         return emojiLabel
     }()
     
+    override var isSelected: Bool {
+        didSet {
+            self.layer.cornerRadius = 8
+            self.backgroundColor = self.isSelected ? .ypLightGray : .clear
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()

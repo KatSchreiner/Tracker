@@ -7,16 +7,28 @@
 
 import UIKit
 
-class CreateNewTrackerViewController: UIViewController {
+protocol CreateTrackerDelegate: AnyObject {
+    func createTracker(tracker: Tracker, category: String)
+}
 
+class CreateNewTrackerViewController: UIViewController {
+    
     // MARK: - Private Properties
-        
+    
+    weak var createTrackerDelegate: CreateTrackerDelegate?
+    var trackerSelectedWeekDays: [WeekDay] = []
     private var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
-                         "😇", "😡", "🥶", "🤔", "🙌", "🍔",
-                         "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+                           "😇", "😡", "🥶", "🤔", "🙌", "🍔",
+                           "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
+    
     private let colors = [UIColor.ypColor1, .ypColor2, .ypColor3, .ypColor4, .ypColor5, .ypColor6,
                           .ypColor7, .ypColor8, .ypColor9, .ypColor10, .ypColor11, .ypColor12,
                           .ypColor13, .ypColor14, .ypColor15, .ypColor16, .ypColor17, .ypColor18]
+    
+    var trackerCategory = "Важное"
+    var trackerName: String?
+    var selectedEmoji: String?
+    var selectedColor: UIColor?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -25,6 +37,7 @@ class CreateNewTrackerViewController: UIViewController {
         collectionView.register(EmojiesCollectionViewCell.self, forCellWithReuseIdentifier: EmojiesCollectionViewCell.emojiIdentifier)
         collectionView.register(ColorsCollectionViewCell.self, forCellWithReuseIdentifier: ColorsCollectionViewCell.colorIdentifier)
         collectionView.register(HeaderCollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderCollectionViewCell.headerIdentifier)
+        collectionView.allowsMultipleSelection = true
         collectionView.dataSource = self
         collectionView.delegate = self
         return collectionView
@@ -70,10 +83,17 @@ class CreateNewTrackerViewController: UIViewController {
     }
     
     // MARK: - IBAction
-    @objc private func didTapCreateButton() {
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc func didTapCreateButton() {
+        guard let name = trackerName, let emoji = selectedEmoji, let color = selectedColor else { return }
         
-//        let newTracker = Tracker(id: TrackersViewController().trackers.count + 1, name: textFieldNameTracker.text ?? "", color: "SomeColor", emoji: "🚀", schedule: [])
-                
+        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: trackerSelectedWeekDays, typeTracker: .habit)
+        
+        createTrackerDelegate?.createTracker(tracker: tracker, category: trackerCategory)
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -95,6 +115,10 @@ class CreateNewTrackerViewController: UIViewController {
             self.view.addSubview(view)
         }
                 
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+        
         addConstraintView()
     }
     
@@ -111,14 +135,26 @@ class CreateNewTrackerViewController: UIViewController {
         ])
     }
     
+    private func changeColorButtonIfTrackerSuccess() {
+        if
+            let name = trackerName,
+            let emoji = selectedEmoji,
+            let color = selectedColor {
+            createButton.backgroundColor = .ypWhiteNight
+            createButton.isUserInteractionEnabled = true
+        } else {
+            createButton.backgroundColor = .ypGray
+            createButton.isUserInteractionEnabled = false
+        }
+    }
+    
 }
-
 
 // MARK: - UICollectionViewDataSource
 extension CreateNewTrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return SectionCollection.allCases.count
-        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let section = SectionCollection(rawValue: section) else { return 0 }
@@ -141,36 +177,42 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
         switch section {
         case .categoryNameField:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryNameFieldCell.nameFieldIdentifier, for: indexPath) as! CategoryNameFieldCell
+            cell.newNameTrackerDelegate = self
             return cell
         case .createNewCategory:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as! CreateNewCategoryCell
+            
+            cell.weekDaysDelegate = self
             
             if self is CreateNewHabitViewController {
                 cell.typeTracker = .habit
             } else if self is CreateNewEventViewController {
                 cell.typeTracker = .event
             }
-
+            
             cell.navigationController = self.navigationController
             return cell
         case .emoji:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as! EmojiesCollectionViewCell
+            cell.prepareForReuse()
             cell.configure(emoji: emojies[indexPath.row])
             return cell
         case .color:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as! ColorsCollectionViewCell
+            cell.prepareForReuse()
             cell.configure(color: colors[indexPath.row])
+           
             return cell
         }
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if kind == UICollectionView.elementKindSectionHeader {
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionViewCell.headerIdentifier, for: indexPath) as! HeaderCollectionViewCell
             
             guard let section = SectionCollection(rawValue: indexPath.section) else { fatalError("Invalid section")}
-
+            
             switch section {
             case .categoryNameField:
                 headerView.titleLabelCell.text = ""
@@ -192,10 +234,41 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 extension CreateNewTrackerViewController: UICollectionViewDelegate {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        collectionView.indexPathsForSelectedItems?.filter({ $0.section == indexPath.section }).forEach({ collectionView.deselectItem(at: $0, animated: false) })
+        return true
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.section == SectionCollection.emoji.rawValue {
+            guard let cell = collectionView.cellForItem(at: indexPath) as? EmojiesCollectionViewCell else {
+                collectionView.deselectItem(at: indexPath, animated: true)
+                return
+            }
+            if let emoji = cell.emojiLabel.text {
+                selectedEmoji = emoji
+            }
+            
+        } else if indexPath.section == SectionCollection.color.rawValue {
+            guard let cell = collectionView.cellForItem(at: indexPath) as? ColorsCollectionViewCell else {
+                collectionView.deselectItem(at: indexPath, animated: true)
+                return
+            }
+            if let color = cell.colorView.backgroundColor  {
+                selectedColor = color
+            }
+    }
+        changeColorButtonIfTrackerSuccess()
+}
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if indexPath.section == SectionCollection.emoji.rawValue {
+            selectedEmoji = nil
+        } else if indexPath.section == SectionCollection.color.rawValue {
+            selectedColor = nil
+        }
+    }
+
     
 }
 
@@ -205,7 +278,7 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         
         guard let section = SectionCollection(rawValue: indexPath.section) else { fatalError("Invalid section")}
-
+        
         switch section {
         case .categoryNameField:
             return CGSize(width: collectionView.bounds.width - 32, height: 75)
@@ -229,10 +302,10 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
             return UIEdgeInsets(top: 10, left: 0, bottom: 30, right: 0)
         case .emoji:
             return UIEdgeInsets(top: 20, left: 16, bottom: 25, right: 16)
-
+            
         case .color:
             return UIEdgeInsets(top: 20, left: 16, bottom: 0, right: 16)
-
+            
         }
     }
     
@@ -244,8 +317,28 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 18)
     }
+    
+
+}
+
+extension CreateNewTrackerViewController: SaveCategoryNameTracker {
+    func addNewNametracker(text: String) {
+        trackerName = text
+    }
+    
+}
+
+extension CreateNewTrackerViewController: SelectedWeekDaysDelegate {
+    func sendSelectedWeekDays(_ selectedDays: [WeekDay]) {
+        trackerSelectedWeekDays = selectedDays
+    }
+    
+    
 }
 
 enum SectionCollection: Int, CaseIterable {
-    case categoryNameField, createNewCategory, emoji, color
+    case categoryNameField
+    case createNewCategory
+    case emoji
+    case color
 }
