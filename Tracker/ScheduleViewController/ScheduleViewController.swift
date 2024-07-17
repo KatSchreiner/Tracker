@@ -7,20 +7,18 @@
 
 import UIKit
 
-protocol ScheduleViewControllerDelegate: AnyObject {
-    func sendSelectedDays(selectedDays: [WeekDay])
-}
-
 class ScheduleViewController: UIViewController {
-    weak var scheduleDelegate: ScheduleViewControllerDelegate?
     
-    private var weekDays: [WeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+    // MARK: - Public Properties
+    weak var scheduleDelegate: ScheduleViewControllerDelegate?
     
     var selectedDays = [WeekDay]()
     
     // MARK: - Private Properties
+    private var weekDays: [WeekDay] = [.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday]
+    
     private lazy var tableView: UITableView = {
-       let tableView = UITableView()
+        let tableView = UITableView()
         tableView.backgroundColor = .ypLightGray
         tableView.layer.cornerRadius = 16
         tableView.delegate = self
@@ -96,7 +94,7 @@ class ScheduleViewController: UIViewController {
     private func configureCell(cell: ScheduleTableCell, indexPath: IndexPath) {
         cell.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         cell.backgroundColor = .ypLightGray
- 
+        
         let weekDay = weekDays[indexPath.row]
         cell.textLabel?.text = weekDay.rawValue
         cell.daySwitch.addTarget(self, action: #selector(switchDidChange(_:)), for: .valueChanged)

@@ -7,15 +7,11 @@
 
 import UIKit
 
-protocol SaveCategoryNameTracker: AnyObject {
-    func addNewNametracker(text: String)
-}
-
 final class CategoryNameFieldCell: UICollectionViewCell {
     static let nameFieldIdentifier = "nameFieldCell"
     
-    weak var newNameTrackerDelegate: SaveCategoryNameTracker?
-
+    weak var newNameTrackerDelegate: SelectedNameTrackerDelegate?
+    
     lazy var textFieldNameTracker: UITextField = {
         let textFieldNameTracker = UITextField()
         textFieldNameTracker.placeholder = "Введите название категории"
@@ -50,7 +46,7 @@ final class CategoryNameFieldCell: UICollectionViewCell {
     
     @objc private func NameTrackerDidChange() {
         guard let text = textFieldNameTracker.text else { return }
-        newNameTrackerDelegate?.addNewNametracker(text: text)
+        newNameTrackerDelegate?.sendSelectedNameTracker(text: text)
     }
     
     @objc private func clearText() {

@@ -8,7 +8,7 @@
 import UIKit
 
 final class SelectTypeTrackerViewController: UIViewController {
-   
+    
     // MARK: - Public Properties
     weak var delegate: CreateTrackerDelegate?
     
@@ -44,12 +44,13 @@ final class SelectTypeTrackerViewController: UIViewController {
         return stackView
     }()
     
-    // MARK: -
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
+    // MARK: - IBAction
     @objc private func didTapCreateNewHabit() {
         let createNewHabit = CreateNewHabitViewController()
         createNewHabit.createTrackerDelegate = delegate
@@ -62,6 +63,7 @@ final class SelectTypeTrackerViewController: UIViewController {
         navigationController?.pushViewController(createNewSchedule, animated: true)
     }
     
+    // MARK: - private Methods
     private func setupView() {
         view.backgroundColor = .ypBlackNight
         

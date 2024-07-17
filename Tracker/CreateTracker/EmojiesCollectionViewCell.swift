@@ -10,7 +10,7 @@ import UIKit
 final class EmojiesCollectionViewCell: UICollectionViewCell {
     
     static let emojiIdentifier = "emojiCell"
-
+    
     var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.font = UIFont.systemFont(ofSize: 32, weight: .bold)
@@ -28,7 +28,7 @@ final class EmojiesCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         setupView()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

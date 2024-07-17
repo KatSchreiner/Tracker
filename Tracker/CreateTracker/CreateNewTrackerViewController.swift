@@ -7,16 +7,19 @@
 
 import UIKit
 
-protocol CreateTrackerDelegate: AnyObject {
-    func createTracker(tracker: Tracker, category: String)
-}
-
 class CreateNewTrackerViewController: UIViewController {
     
-    // MARK: - Private Properties
-    
+    // MARK: - Public Properties
     weak var createTrackerDelegate: CreateTrackerDelegate?
+    weak var delegate: ConfigureTypeTrackerDelegate?
+    
     var trackerSelectedWeekDays: [WeekDay] = []
+    var trackerCategory = "Важное"
+    var trackerName: String?
+    var selectedEmoji: String?
+    var selectedColor: UIColor?
+    
+    // MARK: - Private Properties
     private var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                            "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                            "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
@@ -24,11 +27,6 @@ class CreateNewTrackerViewController: UIViewController {
     private let colors = [UIColor.ypColor1, .ypColor2, .ypColor3, .ypColor4, .ypColor5, .ypColor6,
                           .ypColor7, .ypColor8, .ypColor9, .ypColor10, .ypColor11, .ypColor12,
                           .ypColor13, .ypColor14, .ypColor15, .ypColor16, .ypColor17, .ypColor18]
-    
-    var trackerCategory = "Важное"
-    var trackerName: String?
-    var selectedEmoji: String?
-    var selectedColor: UIColor?
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
@@ -92,6 +90,14 @@ class CreateNewTrackerViewController: UIViewController {
         
         let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: trackerSelectedWeekDays, typeTracker: .habit)
         
+        print("Передаваемые данные:")
+        print("Tracker ID: \(tracker.id)")
+        print("Tracker Name: \(tracker.name)")
+        print("Tracker Color: \(tracker.color)")
+        print("Tracker Emoji: \(tracker.emoji)")
+        print("Tracker Schedule: \(tracker.schedule)")
+        print("Tracker Type: \(tracker.typeTracker)")
+        
         createTrackerDelegate?.createTracker(tracker: tracker, category: trackerCategory)
         
         self.dismiss(animated: true, completion: nil)
@@ -104,9 +110,7 @@ class CreateNewTrackerViewController: UIViewController {
     // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .ypWhiteDay
-        
-        self.title = "Новая привычка"
-        
+                
         [createButton, cancelButton, stackView, collectionView].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -114,12 +118,15 @@ class CreateNewTrackerViewController: UIViewController {
         [stackView, collectionView].forEach { view in
             self.view.addSubview(view)
         }
-                
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
         addConstraintView()
+        
+        self.delegate = self as? ConfigureTypeTrackerDelegate
+
     }
     
     private func addConstraintView() {
@@ -136,10 +143,7 @@ class CreateNewTrackerViewController: UIViewController {
     }
     
     private func changeColorButtonIfTrackerSuccess() {
-        if
-            let name = trackerName,
-            let emoji = selectedEmoji,
-            let color = selectedColor {
+        if let name = trackerName, let emoji = selectedEmoji, let color = selectedColor {
             createButton.backgroundColor = .ypWhiteNight
             createButton.isUserInteractionEnabled = true
         } else {
@@ -147,7 +151,6 @@ class CreateNewTrackerViewController: UIViewController {
             createButton.isUserInteractionEnabled = false
         }
     }
-    
 }
 
 // MARK: - UICollectionViewDataSource
@@ -183,12 +186,8 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as! CreateNewCategoryCell
             
             cell.weekDaysDelegate = self
-            
-            if self is CreateNewHabitViewController {
-                cell.typeTracker = .habit
-            } else if self is CreateNewEventViewController {
-                cell.typeTracker = .event
-            }
+
+            delegate?.selectTypeTracker(cell: cell)
             
             cell.navigationController = self.navigationController
             return cell
@@ -201,7 +200,7 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as! ColorsCollectionViewCell
             cell.prepareForReuse()
             cell.configure(color: colors[indexPath.row])
-           
+            
             return cell
         }
     }
@@ -257,9 +256,9 @@ extension CreateNewTrackerViewController: UICollectionViewDelegate {
             if let color = cell.colorView.backgroundColor  {
                 selectedColor = color
             }
-    }
+        }
         changeColorButtonIfTrackerSuccess()
-}
+    }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if indexPath.section == SectionCollection.emoji.rawValue {
@@ -268,8 +267,6 @@ extension CreateNewTrackerViewController: UICollectionViewDelegate {
             selectedColor = nil
         }
     }
-
-    
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
@@ -278,12 +275,12 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         
         guard let section = SectionCollection(rawValue: indexPath.section) else { fatalError("Invalid section")}
-        
+                
         switch section {
         case .categoryNameField:
             return CGSize(width: collectionView.bounds.width - 32, height: 75)
         case .createNewCategory:
-            return CGSize(width: collectionView.bounds.width - 32, height: 150)
+            return delegate?.calculateTableHeight(width: collectionView.bounds.width - 32) ?? CGSize(width: collectionView.bounds.width - 32, height: 150)
         case .emoji:
             return CGSize(width: 52, height: 52)
         case .color:
@@ -317,23 +314,18 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 18)
     }
-    
-
 }
 
-extension CreateNewTrackerViewController: SaveCategoryNameTracker {
-    func addNewNametracker(text: String) {
+extension CreateNewTrackerViewController: SelectedNameTrackerDelegate {
+    func sendSelectedNameTracker(text: String) {
         trackerName = text
     }
-    
 }
 
 extension CreateNewTrackerViewController: SelectedWeekDaysDelegate {
     func sendSelectedWeekDays(_ selectedDays: [WeekDay]) {
         trackerSelectedWeekDays = selectedDays
-    }
-    
-    
+    } 
 }
 
 enum SectionCollection: Int, CaseIterable {

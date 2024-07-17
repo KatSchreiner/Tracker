@@ -7,16 +7,13 @@
 
 import UIKit
 
-protocol CategoryViewControllerDelegate: AnyObject {
-    func sendSelectedCategory(selectedCategory: String)
-}
-
 final class CategoryViewController: UIViewController {
+    
+    // MARK: - Public Properties
+    weak var categoryDelegate: CategoryViewControllerDelegate?
     
     // MARK: - Private Properties
     private let reuseIdentifier = "cellNewCategory"
-    var typeTracker: TypeTracker?
-    weak var categoryDelegate: CategoryViewControllerDelegate?
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -39,24 +36,17 @@ final class CategoryViewController: UIViewController {
         addCategoryButton.addTarget(self, action: #selector(didTapAddCategory), for: .touchUpInside)
         return addCategoryButton
     }()
-        
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
+    // MARK: - IBAction
     @objc private func didTapAddCategory() {
         navigationController?.popViewController(animated: true)
         categoryDelegate?.sendSelectedCategory(selectedCategory: "Важное" )
-        switch typeTracker {
-          case .habit:
-              categoryDelegate?.sendSelectedCategory(selectedCategory: "Важное")
-          case .event:
-              categoryDelegate?.sendSelectedCategory(selectedCategory: "Важное")
-          case .none:
-              break
-          }
     }
     
     // MARK: - Private Methods
@@ -95,6 +85,7 @@ final class CategoryViewController: UIViewController {
     }
 }
 
+// MARK: - IBAction UITableViewDelegate, UITableViewDataSource
 extension CategoryViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
@@ -105,7 +96,7 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource{
         
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryType = .checkmark
-
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

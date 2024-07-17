@@ -7,17 +7,11 @@
 
 import UIKit
 
-protocol TrackerCompletionDelegate: AnyObject {
-    func didUpdateTrackerCompletion(trackerId: UUID, indexPath: IndexPath, isTrackerCompleted: Bool)
-}
-
 class TrackerCollectionViewCell: UICollectionViewCell {
     
+    // MARK: Public Properties
     static var identifier = "TrackerCell"
     weak var delegate: TrackerCompletionDelegate?
-    
-    private var trackerId: UUID?
-    private var indexPath: IndexPath?
     
     var isTrackerCompleted: Bool = false
     
@@ -67,6 +61,11 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         return bodyView
     }()
     
+    // MARK: - Private Properties
+    private var trackerId: UUID?
+    private var indexPath: IndexPath?
+    
+    // MARK: - View Life Cycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -76,11 +75,22 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureAddButton(tracker: Tracker, indexPath: IndexPath, completedForCurrentDate: Int, isTrackerCompleted: Bool) {
+    // MARK: - IBAction
+    @objc func didTapCompletedTrackers() {
+        guard let trackerId, let indexPath = indexPath else { return }
+        if isTrackerCompleted {
+            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: false)
+        } else {
+            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: true)
+        }
+    }
+    
+    // MARK: - Public Methods
+    func configureAddButton(tracker: Tracker, indexPath: IndexPath, completedForCurrentDate: Int, isTrackerCompleted: Bool, typeTracker: TypeTracker) {
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = tracker.id
         self.indexPath = indexPath
-                
+        
         titleLabelCell.text = tracker.name
         emojiLabelCell.text = tracker.emoji
         bodyView.backgroundColor = tracker.color
@@ -105,15 +115,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         daysCountLabelCell.text = String(daysCount) + " " + days
     }
     
-    @objc func didTapCompletedTrackers() {
-        guard let trackerId, let indexPath = indexPath else { return }
-        if isTrackerCompleted {
-            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: false)
-        } else {
-            delegate?.didUpdateTrackerCompletion(trackerId: trackerId, indexPath: indexPath, isTrackerCompleted: true)
-        }
-    }
-    
+    // MARK: - Private Methods    
     private func setupView() {
         bodyView.addSubview(titleLabelCell)
         titleLabelCell.translatesAutoresizingMaskIntoConstraints = false
@@ -138,10 +140,6 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     
     private func addConstraintView() {
         NSLayoutConstraint.activate([
-            emojiLabelCell.topAnchor.constraint(equalTo: emojiCircle.topAnchor, constant: 4),
-            emojiLabelCell.leadingAnchor.constraint(equalTo: emojiCircle.leadingAnchor, constant: 4),
-            emojiLabelCell.heightAnchor.constraint(equalToConstant: 24),
-            emojiLabelCell.widthAnchor.constraint(equalToConstant: 24),
             emojiLabelCell.centerXAnchor.constraint(equalTo: emojiCircle.centerXAnchor),
             emojiLabelCell.centerYAnchor.constraint(equalTo: emojiCircle.centerYAnchor),
             emojiCircle.leadingAnchor.constraint(equalTo: bodyView.leadingAnchor, constant: 12),
@@ -159,8 +157,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
             addButtonCell.heightAnchor.constraint(equalToConstant: 34),
             addButtonCell.widthAnchor.constraint(equalToConstant: 34),
             bodyView.heightAnchor.constraint(equalToConstant: 90),
-            bodyView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            bodyView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bodyView.widthAnchor.constraint(equalToConstant: contentView.frame.width),
             bodyView.topAnchor.constraint(equalTo: topAnchor)
         ])
     }

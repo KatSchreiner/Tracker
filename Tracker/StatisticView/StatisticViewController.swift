@@ -36,10 +36,10 @@ final class StatisticViewController: UIViewController {
     private func setupTitleStatistic() {
         titleStatistic.text = "Статистика"
         titleStatistic.textColor = .ypBlackDay
-        titleStatistic.font = UIFont.boldSystemFont(ofSize: 34.0)
+        titleStatistic.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         NSLayoutConstraint.activate([
             titleStatistic.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            titleStatistic.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 48)
+            titleStatistic.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 34)
         ])
     }
     

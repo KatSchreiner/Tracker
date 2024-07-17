@@ -1,13 +1,13 @@
 //
-//  ButtonPressed.swift
+//  TypeTracker.swift
 //  Tracker
 //
-//  Created by Екатерина Шрайнер on 05.07.2024.
+//  Created by Екатерина Шрайнер on 16.07.2024.
 //
 
 import Foundation
 
-//enum TypeTracker {
-//    case habit
-//    case event
-//}
+enum TypeTracker {
+    case habit
+    case event
+}

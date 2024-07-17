@@ -14,5 +14,19 @@ final class CreateNewHabitViewController: CreateNewTrackerViewController {
         self.title = "Новая привычка"
         view.backgroundColor = .white
         navigationItem.hidesBackButton = true
+        
+        self.delegate = self
+    }
+}
+
+extension CreateNewHabitViewController: ConfigureTypeTrackerDelegate {
+    
+    func selectTypeTracker(cell: CreateNewCategoryCell) {
+        print("SelectTypeTrackerDelegate Habit called!")
+        cell.typeTracker = .habit
+    }
+    
+    func calculateTableHeight(width: CGFloat) -> CGSize {
+        return CGSize(width: width, height: 150)
     }
 }

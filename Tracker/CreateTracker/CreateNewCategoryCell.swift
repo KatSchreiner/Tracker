@@ -7,34 +7,22 @@
 
 import UIKit
 
-enum TypeTracker {
-    case habit
-    case event
-}
-
-protocol SelectedWeekDaysDelegate: AnyObject {
-    func sendSelectedWeekDays(_ selectedDays: [WeekDay])
-}
-
 final class CreateNewCategoryCell: UICollectionViewCell {
     
+    // MARK: Public Properties
     static let newCategoryIdentifier = "newCategoryCell"
     
     weak var weekDaysDelegate: SelectedWeekDaysDelegate?
-            
-    var selectedWeekDays = [WeekDay]()
-    var selectedCategory = ""
-    
-    var cellTitles = ["Категория", "Расписание"]
-    
-    var typeTracker: TypeTracker?
-    
     weak var navigationController: UINavigationController?
     
-    private lazy var tableView: UITableView = {
+    var selectedWeekDays = [WeekDay]()
+    var selectedCategory = ""
+        
+    var typeTracker: TypeTracker?
+        
+    // MARK: Private Properties
+    var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.delegate = self
-        tableView.dataSource = self
         tableView.separatorStyle = .singleLine
         tableView.separatorColor = .ypGray
         tableView.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
@@ -44,6 +32,7 @@ final class CreateNewCategoryCell: UICollectionViewCell {
         return tableView
     }()
     
+    // MARK: Override Methods
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -53,7 +42,11 @@ final class CreateNewCategoryCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Private Methods
     private func setupView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         contentView.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -68,6 +61,10 @@ final class CreateNewCategoryCell: UICollectionViewCell {
 
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if typeTracker == .habit {
             return 2
@@ -77,58 +74,58 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellNewTracker")
         
         cell.accessoryType = .disclosureIndicator
         cell.backgroundColor = .ypLightGray
-        
-        let titleCell = "\(cellTitles[indexPath.row])"
-        cell.textLabel?.text = titleCell
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .ypGray
         
+        guard let typeTracker = typeTracker else { return UITableViewCell() }
+        
+        let section = SectionTable(rawValue: indexPath.row)
+        
         if typeTracker == .habit {
-            switch titleCell {
-                
-            case "Категория":
+            switch section {
+            case .category:
                 cell.detailTextLabel?.text = selectedCategory
-            case "Расписание":
+                cell.textLabel?.text = "Категория"
+            case .schedule:
+                cell.textLabel?.text = "Расписание"
                 if selectedWeekDays.count == 7 {
                     cell.detailTextLabel?.text = "Каждый день"
                 } else {
+                    cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                    
                     let selectedDaysText = selectedWeekDays.map { $0.rawValue }.joined(separator: ", ")
                     cell.detailTextLabel?.text = selectedDaysText
                 }
-                
             default:
-                break
+                return UITableViewCell()
             }
-        } else if typeTracker == .event {
-            cellTitles = ["Категория"]
+        } else {
+            cell.textLabel?.text = "Категория"
             cell.layer.cornerRadius = 16
             cell.detailTextLabel?.text = selectedCategory
         }
         return cell
-    }
+}
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let title = cellTitles[indexPath.row]
-        
-        switch title {
-        case "Категория":
+        let section = SectionTable(rawValue: indexPath.row)
+        switch section {
+        case .category:
             let categoryViewController = CategoryViewController()
             categoryViewController.categoryDelegate = self
-            categoryViewController.typeTracker = typeTracker
             navigationController?.pushViewController(categoryViewController, animated: true)
-        case "Расписание":
+        case .schedule:
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.scheduleDelegate = self
             navigationController?.pushViewController(scheduleViewController, animated: true)
-        default:
-            return
+        case .none:
+            break
         }
     }
     
@@ -143,14 +140,14 @@ extension CreateNewCategoryCell: ScheduleViewControllerDelegate {
         self.selectedWeekDays = selectedDays
         
         weekDaysDelegate?.sendSelectedWeekDays(selectedDays)
-
+        
         if selectedDays.count == 7 {
             tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "Каждый день"
         } else {
             let selectedDaysText = selectedDays.map { $0.rawValue }.joined(separator: ", ")
             tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = selectedDaysText
         }
-        tableView.reloadData()
+        tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)
     }
 }
 

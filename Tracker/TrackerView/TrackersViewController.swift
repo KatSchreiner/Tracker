@@ -7,7 +7,6 @@
 import UIKit
 
 class TrackersViewController: UIViewController {
-    static let shared = TrackersViewController()
     
     // MARK: - Public Properties
     var categories: [TrackerCategory] = []
@@ -16,7 +15,7 @@ class TrackersViewController: UIViewController {
     lazy var currentCategories: [TrackerCategory] = {
         showTrackersInCurrentDate()
     }()
-
+    
     // MARK: - Private Properties
     private lazy var addButton: UIButton = {
         let addButton = UIButton(type: .custom)
@@ -112,7 +111,7 @@ class TrackersViewController: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-
+        
         addConstraint()
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -176,12 +175,13 @@ class TrackersViewController: UIViewController {
     }
 }
 
+// MARK: - TrackerCompletionDelegate
 extension TrackersViewController: TrackerCompletionDelegate {
     func didUpdateTrackerCompletion(trackerId: UUID, indexPath: IndexPath, isTrackerCompleted: Bool) {
         if currentDate > Date() {
-              print("Вы не можете пометить трекер как выполненный на будущую дату")
-              return
-          }
+            print("Вы не можете пометить трекер как выполненный на будущую дату")
+            return
+        }
         if isTrackerCompleted {
             completedTrackers.append(TrackerRecord(trackerId: trackerId, date: currentDate))
             collectionView.reloadData()
@@ -238,12 +238,13 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         let tracker = currentCategories[indexPath.section].trackers[indexPath.row]
         let completedForCurrentDate = completedTrackers.filter { $0.trackerId == tracker.id }.count
+        let typeTracker = tracker.typeTracker
         
         cell.delegate = self
         
         let isTrackerComplete = isTrackerComplete(trackerId: tracker.id)
-
-        cell.configureAddButton(tracker: tracker, indexPath: indexPath, completedForCurrentDate: completedForCurrentDate, isTrackerCompleted: isTrackerComplete)
+        
+        cell.configureAddButton(tracker: tracker, indexPath: indexPath, completedForCurrentDate: completedForCurrentDate, isTrackerCompleted: isTrackerComplete, typeTracker: typeTracker)
         
         
         return cell
@@ -258,6 +259,7 @@ extension TrackersViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let availableWidth = collectionView.frame.width - 16 * 2 - 9
@@ -306,18 +308,27 @@ extension TrackersViewController: CreateTrackerDelegate {
     }
 }
 
+// MARK: - UISearchBarDelegate
 extension TrackersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        currentCategories = []
-        categories.forEach { category in
-            let title = category.title
-            let trackers = category.trackers.filter { tracker in
-                return tracker.name.contains(searchText)
-            }
-            if !trackers.isEmpty {
-                currentCategories.append(TrackerCategory(title: title, trackers: trackers))
+        if searchText.isEmpty {
+            currentCategories = showTrackersInCurrentDate()
+        } else {
+            currentCategories = categories.compactMap { category in
+                let filteredTrackers = category.trackers.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+                return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
             }
         }
+        collectionView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        currentCategories = showTrackersInCurrentDate()
         collectionView.reloadData()
     }
 }

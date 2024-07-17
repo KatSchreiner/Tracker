@@ -22,17 +22,13 @@ final class HeaderCollectionViewCell: UICollectionReusableView {
         addSubview(titleLabelCell)
         titleLabelCell.translatesAutoresizingMaskIntoConstraints = false
         
-        
-        
         NSLayoutConstraint.activate([
             titleLabelCell.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 25),
             titleLabelCell.centerYAnchor.constraint(equalTo: centerYAnchor)
-
         ])
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
 }
