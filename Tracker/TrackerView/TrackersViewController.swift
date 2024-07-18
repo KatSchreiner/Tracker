@@ -37,23 +37,16 @@ class TrackersViewController: UIViewController {
         return datePicker
     }()
     
-    private lazy var titleTracker: UILabel = {
-        let titleTracker = UILabel()
-        titleTracker.text = "Трекеры"
-        titleTracker.textColor = .ypBlackDay
-        titleTracker.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        return titleTracker
+    private lazy var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.delegate = self
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.searchBar.searchBarStyle = .default
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.searchBar.placeholder = "Поиск"
+        return searchController
     }()
-    
-    private lazy var searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.searchBarStyle = UISearchBar.Style.default
-        searchBar.delegate = self
-        searchBar.backgroundImage = UIImage()
-        searchBar.placeholder = "Поиск"
-        return searchBar
-    }()
-    
+
     private lazy var placeholderForTrackers: UIImageView = {
         let notFoundTrackers = UIImage(named: "not_found_trackers")
         let placeholderForTrackers = UIImageView(image: notFoundTrackers)
@@ -89,10 +82,11 @@ class TrackersViewController: UIViewController {
         labelIfSearchNotFound.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return labelIfSearchNotFound
     }()
-    
+        
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigation()
         setupView()
     }
     
@@ -111,43 +105,32 @@ class TrackersViewController: UIViewController {
         updateCollection()
     }
     
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
     // MARK: - Private Methods
+    private func setupNavigation() {
+        title = "Трекеры"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
+
+        navigationItem.searchController = searchController
+    }
     private func setupView() {
         view.backgroundColor = .white
-        [addButton, datePicker, titleTracker, searchBar, collectionView, placeholderForTrackers, labelIfNotFoundTrackers, placeholderForSearch, labelIfSearchNotFound].forEach { view in
+        [addButton, datePicker, collectionView, placeholderForTrackers, labelIfNotFoundTrackers, placeholderForSearch, labelIfSearchNotFound].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-        
         addConstraint()
         
         updatePlaceholderVisibilityForSearch(setHidden: true)
-        
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
     }
     
     private func addConstraint() {
         NSLayoutConstraint.activate([
-            addButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            addButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            datePicker.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             datePicker.widthAnchor.constraint(equalToConstant: 100),
-            titleTracker.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            titleTracker.topAnchor.constraint(equalTo: addButton.topAnchor, constant: 25),
-            searchBar.topAnchor.constraint(equalToSystemSpacingBelow: titleTracker.bottomAnchor, multiplier: 16),
-            searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 8),
-            searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-            collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
