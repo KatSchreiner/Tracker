@@ -67,6 +67,7 @@ class ScheduleViewController: UIViewController {
             self.view.addSubview(view)
         }
         view.backgroundColor = .ypWhiteDay
+        navigationItem.hidesBackButton = true
         self.title = "Расписание"
         
         addConstraintScheduleTableView()
@@ -96,7 +97,7 @@ class ScheduleViewController: UIViewController {
         cell.backgroundColor = .ypLightGray
         
         let weekDay = weekDays[indexPath.row]
-        cell.textLabel?.text = weekDay.rawValue
+        cell.textLabel?.text = weekDay.fullName
         cell.daySwitch.addTarget(self, action: #selector(switchDidChange(_:)), for: .valueChanged)
         cell.daySwitch.tag = indexPath.row
         

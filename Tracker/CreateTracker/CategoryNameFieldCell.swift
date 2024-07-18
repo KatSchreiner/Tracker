@@ -14,10 +14,13 @@ final class CategoryNameFieldCell: UICollectionViewCell {
     
     lazy var textFieldNameTracker: UITextField = {
         let textFieldNameTracker = UITextField()
+        let textPadding = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textFieldNameTracker.frame.height))
+            textFieldNameTracker.leftView = textPadding
+            textFieldNameTracker.leftViewMode = .always
         textFieldNameTracker.placeholder = "Введите название категории"
         textFieldNameTracker.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textFieldNameTracker.textAlignment = .center
-        textFieldNameTracker.textColor = .ypGray
+        textFieldNameTracker.textAlignment = .left
+        textFieldNameTracker.textColor = .ypWhiteNight
         textFieldNameTracker.backgroundColor = .ypLightGray
         textFieldNameTracker.layer.cornerRadius = 16
         textFieldNameTracker.rightView = clearButton
@@ -30,7 +33,7 @@ final class CategoryNameFieldCell: UICollectionViewCell {
         let clearButton = UIButton()
         let image = UIImage(named: "clear_text")
         clearButton.setImage(image, for: .normal)
-        clearButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        clearButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
         clearButton.addTarget(self, action: #selector(clearText), for: .touchUpInside)
         return clearButton
     }()

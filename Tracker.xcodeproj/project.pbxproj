@@ -25,6 +25,7 @@
 		C15B06722C31F8EB004FA024 /* HeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15B06712C31F8EB004FA024 /* HeaderCollectionViewCell.swift */; };
 		C15BA1D72C3D517300A64F1D /* CompleteTrackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15BA1D62C3D517300A64F1D /* CompleteTrackers.swift */; };
 		C15BA1D92C3EBDAC00A64F1D /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15BA1D82C3EBDAC00A64F1D /* WeekDay.swift */; };
+		C160ED622C48E1C9004F553C /* SectionCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C160ED612C48E1C9004F553C /* SectionCollection.swift */; };
 		C195C3832C34202000887EB1 /* ColorsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C195C3822C34202000887EB1 /* ColorsCollectionViewCell.swift */; };
 		C195C3852C34203A00887EB1 /* EmojiesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C195C3842C34203A00887EB1 /* EmojiesCollectionViewCell.swift */; };
 		C195C3872C36A39100887EB1 /* CategoryNameFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C195C3862C36A39100887EB1 /* CategoryNameFieldCell.swift */; };
@@ -68,6 +69,7 @@
 		C15B06712C31F8EB004FA024 /* HeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCollectionViewCell.swift; sourceTree = "<group>"; };
 		C15BA1D62C3D517300A64F1D /* CompleteTrackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompleteTrackers.swift; sourceTree = "<group>"; };
 		C15BA1D82C3EBDAC00A64F1D /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		C160ED612C48E1C9004F553C /* SectionCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCollection.swift; sourceTree = "<group>"; };
 		C195C3822C34202000887EB1 /* ColorsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCollectionViewCell.swift; sourceTree = "<group>"; };
 		C195C3842C34203A00887EB1 /* EmojiesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiesCollectionViewCell.swift; sourceTree = "<group>"; };
 		C195C3862C36A39100887EB1 /* CategoryNameFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryNameFieldCell.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				C15BA1D62C3D517300A64F1D /* CompleteTrackers.swift */,
 				C15BA1D82C3EBDAC00A64F1D /* WeekDay.swift */,
 				C1B1B1EB2C466218001269C4 /* TypeTracker.swift */,
+				C160ED612C48E1C9004F553C /* SectionCollection.swift */,
 				C1B1B1ED2C478306001269C4 /* SectionTable.swift */,
 			);
 			path = Models;
@@ -330,6 +333,7 @@
 				C1B1B1F32C478408001269C4 /* ConfigureTypeTrackerDelegate.swift in Sources */,
 				C1B1B1F92C478516001269C4 /* SelectedNameTrackerDelegate.swift in Sources */,
 				C195C3852C34203A00887EB1 /* EmojiesCollectionViewCell.swift in Sources */,
+				C160ED622C48E1C9004F553C /* SectionCollection.swift in Sources */,
 				C1B1B1EC2C466218001269C4 /* TypeTracker.swift in Sources */,
 				C1B1B1F12C4783BA001269C4 /* CreateTrackerDelegate.swift in Sources */,
 				C11E40D62C2850E6001A5C99 /* TrackerCategory.swift in Sources */,

@@ -16,3 +16,24 @@ enum WeekDay: String, CaseIterable {
     case saturday = "Сб"
     case sunday = "Вс"
 }
+
+extension WeekDay {
+    var fullName: String {
+        switch self {
+        case .monday:
+            return "Понедельник"
+        case .tuesday:
+            return "Вторник"
+        case .wednesday:
+            return "Среда"
+        case .thursday:
+            return "Четверг"
+        case .friday:
+            return "Пятница"
+        case .saturday:
+            return "Суббота"
+        case .sunday:
+            return "Воскресенье"
+        }
+    }
+}

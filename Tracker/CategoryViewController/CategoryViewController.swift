@@ -46,12 +46,12 @@ final class CategoryViewController: UIViewController {
     // MARK: - IBAction
     @objc private func didTapAddCategory() {
         navigationController?.popViewController(animated: true)
-        categoryDelegate?.sendSelectedCategory(selectedCategory: "Важное" )
     }
     
     // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .ypWhiteDay
+        navigationItem.hidesBackButton = true
         title = "Категория"
         
         [tableView, addCategoryButton].forEach { view in
@@ -97,6 +97,11 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.cellForRow(at: indexPath)
         cell?.accessoryType = .checkmark
         
+        categoryDelegate?.sendSelectedCategory(selectedCategory: "Важное" )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

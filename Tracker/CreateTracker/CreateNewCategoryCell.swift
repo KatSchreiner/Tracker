@@ -138,9 +138,9 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
 extension CreateNewCategoryCell: ScheduleViewControllerDelegate {
     func sendSelectedDays(selectedDays: [WeekDay]) {
         self.selectedWeekDays = selectedDays
-        
+
         weekDaysDelegate?.sendSelectedWeekDays(selectedDays)
-        
+
         if selectedDays.count == 7 {
             tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "Каждый день"
         } else {

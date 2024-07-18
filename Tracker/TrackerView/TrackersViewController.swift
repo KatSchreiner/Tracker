@@ -12,6 +12,7 @@ class TrackersViewController: UIViewController {
     var categories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
     var currentDate: Date = Date()
+    var isSearching: Bool = false
     lazy var currentCategories: [TrackerCategory] = {
         showTrackersInCurrentDate()
     }()
@@ -76,6 +77,19 @@ class TrackersViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var placeholderForSearch: UIImageView = {
+        let searchForTrackers = UIImage(named: "search_not_found")
+        let placeholderForSearch = UIImageView(image: searchForTrackers)
+        return placeholderForSearch
+    }()
+    
+    private lazy var labelIfSearchNotFound: UILabel = {
+        let labelIfSearchNotFound = UILabel()
+        labelIfSearchNotFound.text = "Ничего не найдено"
+        labelIfSearchNotFound.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        return labelIfSearchNotFound
+    }()
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -104,7 +118,7 @@ class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .white
-        [addButton, datePicker, titleTracker, searchBar, collectionView, placeholderForTrackers, labelIfNotFoundTrackers].forEach { view in
+        [addButton, datePicker, titleTracker, searchBar, collectionView, placeholderForTrackers, labelIfNotFoundTrackers, placeholderForSearch, labelIfSearchNotFound].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -113,6 +127,8 @@ class TrackersViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         
         addConstraint()
+        
+        updatePlaceholderVisibilityForSearch(setHidden: true)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
@@ -140,7 +156,13 @@ class TrackersViewController: UIViewController {
             placeholderForTrackers.widthAnchor.constraint(equalToConstant: 80),
             placeholderForTrackers.heightAnchor.constraint(equalToConstant: 80),
             labelIfNotFoundTrackers.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            labelIfNotFoundTrackers.topAnchor.constraint(equalTo: placeholderForTrackers.bottomAnchor, constant: 10)
+            labelIfNotFoundTrackers.topAnchor.constraint(equalTo: placeholderForTrackers.bottomAnchor, constant: 10),
+            placeholderForSearch.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            placeholderForSearch.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            placeholderForSearch.widthAnchor.constraint(equalToConstant: 80),
+            placeholderForSearch.heightAnchor.constraint(equalToConstant: 80),
+            labelIfSearchNotFound.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            labelIfSearchNotFound.topAnchor.constraint(equalTo: placeholderForSearch.bottomAnchor, constant: 10)
         ])
     }
     
@@ -172,6 +194,11 @@ class TrackersViewController: UIViewController {
     private func updatePlaceholderVisibility(setHidden: Bool) {
         placeholderForTrackers.isHidden = setHidden
         labelIfNotFoundTrackers.isHidden = setHidden
+    }
+    
+    private func updatePlaceholderVisibilityForSearch(setHidden: Bool) {
+        placeholderForSearch.isHidden = setHidden
+        labelIfSearchNotFound.isHidden = setHidden
     }
 }
 
@@ -213,7 +240,7 @@ extension TrackersViewController: TrackerCompletionDelegate {
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        if currentCategories.isEmpty {
+        if currentCategories.isEmpty && !isSearching {
             updatePlaceholderVisibility(setHidden: false)
             return 0
         } else {
@@ -311,17 +338,26 @@ extension TrackersViewController: CreateTrackerDelegate {
 // MARK: - UISearchBarDelegate
 extension TrackersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            currentCategories = showTrackersInCurrentDate()
-        } else {
+        isSearching = !searchText.isEmpty
+        
+        if isSearching {
             currentCategories = categories.compactMap { category in
                 let filteredTrackers = category.trackers.filter { $0.name.lowercased().contains(searchText.lowercased()) }
                 return filteredTrackers.isEmpty ? nil : TrackerCategory(title: category.title, trackers: filteredTrackers)
             }
+        } else {
+            currentCategories = showTrackersInCurrentDate()
         }
+        
+        if currentCategories.isEmpty {
+            updatePlaceholderVisibilityForSearch(setHidden: false)
+        } else {
+            updatePlaceholderVisibilityForSearch(setHidden: true)
+        }
+        
         collectionView.reloadData()
     }
-    
+
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
