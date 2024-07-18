@@ -29,6 +29,9 @@ final class MainTabBarController: UITabBarController {
             image: UIImage(named: "ic_tabbar_statistic"),
             tag: 1)
         
-        self.viewControllers = [trackersViewController, statisticViewController]
+        let navigationTrackersViewController = UINavigationController(rootViewController: trackersViewController)
+        let navigationStatisticViewController = UINavigationController(rootViewController: statisticViewController)
+        
+        self.viewControllers = [navigationTrackersViewController, navigationStatisticViewController]
     }
 }
