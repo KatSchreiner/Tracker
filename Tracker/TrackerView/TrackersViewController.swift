@@ -18,6 +18,10 @@ class TrackersViewController: UIViewController {
     }()
     
     // MARK: - Private Properties
+    private let trackerStore = TrackerStore()
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    
     private lazy var addButton: UIButton = {
         let addButton = UIButton(type: .custom)
         let image = UIImage(named: "plus")
@@ -46,7 +50,7 @@ class TrackersViewController: UIViewController {
         searchController.searchBar.placeholder = "Поиск"
         return searchController
     }()
-
+    
     private lazy var placeholderForTrackers: UIImageView = {
         let notFoundTrackers = UIImage(named: "not_found_trackers")
         let placeholderForTrackers = UIImageView(image: notFoundTrackers)
@@ -82,12 +86,17 @@ class TrackersViewController: UIViewController {
         labelIfSearchNotFound.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         return labelIfSearchNotFound
     }()
-        
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigation()
         setupView()
+        
+        trackerStore.delegate = self
+        trackerRecordStore.delegate = self
+        
+        loadCoreData()
     }
     
     // MARK: - IBAction
@@ -103,16 +112,24 @@ class TrackersViewController: UIViewController {
         currentDate = selectedDate
         currentCategories = showTrackersInCurrentDate()
         updateCollection()
+        
     }
     
     // MARK: - Private Methods
+    private func loadCoreData() {
+        try? trackerCategoryStore.saveCategoryToCoreData(title: "Важное")
+        
+        categories = trackerCategoryStore.categories
+        completedTrackers = trackerRecordStore.trackerRecord
+    }
+    
     private func setupNavigation() {
         title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addButton)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
-
+        
         navigationItem.searchController = searchController
     }
     private func setupView() {
@@ -195,7 +212,10 @@ extension TrackersViewController: TrackerCompletionDelegate {
         if isTrackerCompleted {
             completedTrackers.append(TrackerRecord(trackerId: trackerId, date: currentDate))
             collectionView.reloadData()
+            
+            try? trackerRecordStore.addRecordToCompletedTrackers(trackerId: trackerId, date: currentDate)
             print("Трекер добавлен в completedTrackers: \(completedTrackers)")
+            
         } else {
             completedTrackers = completedTrackers.filter {
                 if $0.trackerId == trackerId && Calendar.current.isDate(
@@ -207,6 +227,9 @@ extension TrackersViewController: TrackerCompletionDelegate {
                 }
                 return true
             }
+            
+            try? trackerRecordStore.removeRecordFromCompletedTrackers(trackerId: trackerId, date: currentDate)
+            
             print("Трекер удален из completedTrackers: \(completedTrackers)")
         }
         collectionView.reloadData()
@@ -301,6 +324,8 @@ extension TrackersViewController: CreateTrackerDelegate {
         let category = category
         let categorySearch = categories.filter { $0.title == category }
         
+        try? trackerStore.saveTrackerToCoreData(tracker: tracker, category: category)
+        
         var trackers: [Tracker] = []
         if categorySearch.count > 0 {
             categorySearch.forEach { trackers = trackers + $0.trackers }
@@ -340,7 +365,7 @@ extension TrackersViewController: UISearchBarDelegate {
         
         collectionView.reloadData()
     }
-
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }
@@ -349,5 +374,18 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.text = ""
         currentCategories = showTrackersInCurrentDate()
         collectionView.reloadData()
+    }
+}
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func trackerStoreDidChange(_ store: TrackerStore) {
+        categories = trackerCategoryStore.categories
+        collectionView.reloadData()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func recordDidChange() {
+        completedTrackers = trackerRecordStore.trackerRecord
     }
 }
