@@ -10,37 +10,17 @@ import UIKit
 
 final class StatisticViewController: UIViewController {
     
-    private lazy var titleStatistic: UILabel = {
-        let titleStatistic = UILabel()
-        return titleStatistic
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView() 
-        setupTitleStatistic()
+        setupNavigation()
+        setupView()
     }
 
-    private func ifTrackerEmpty() {
-        
+    private func setupNavigation() {
+        title = "Статистика"
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
-    
     private func setupView() {
         view.backgroundColor = .white
-        [titleStatistic].forEach { view in
-            view.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(view)
-        }
     }
-    
-    private func setupTitleStatistic() {
-        titleStatistic.text = "Статистика"
-        titleStatistic.textColor = .ypBlackDay
-        titleStatistic.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        NSLayoutConstraint.activate([
-            titleStatistic.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            titleStatistic.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 34)
-        ])
-    }
-    
 }
