@@ -14,7 +14,7 @@ class CreateNewTrackerViewController: UIViewController {
     weak var delegate: ConfigureTypeTrackerDelegate?
     
     var trackerSelectedWeekDays: [WeekDay] = []
-    var trackerCategory = "Важное"
+    var selectedCategory = ""
     var trackerName: String?
     var selectedEmoji: String?
     var selectedColor: UIColor?
@@ -86,19 +86,26 @@ class CreateNewTrackerViewController: UIViewController {
     }
     
     @objc func didTapCreateButton() {
-        guard let name = trackerName, let emoji = selectedEmoji, let color = selectedColor else { return }
+        guard 
+            let name = trackerName,
+            let emoji = selectedEmoji,
+            let color = selectedColor
+        else { return }
         
         let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: trackerSelectedWeekDays, typeTracker: .habit)
         
-        print("Передаваемые данные:")
-        print("Tracker ID: \(tracker.id)")
-        print("Tracker Name: \(tracker.name)")
-        print("Tracker Color: \(tracker.color)")
-        print("Tracker Emoji: \(tracker.emoji)")
-        print("Tracker Schedule: \(tracker.schedule)")
-        print("Tracker Type: \(tracker.typeTracker)")
+        createTrackerDelegate?.createTracker(tracker: tracker, category: selectedCategory)
         
-        createTrackerDelegate?.createTracker(tracker: tracker, category: trackerCategory)
+        print("""
+        [CreateNewTrackerViewController: didTapCreateButton] Передаваемые данные:
+        ID: \(tracker.id)
+        Name: \(tracker.name)
+        Color: \(tracker.color)
+        Emoji: \(tracker.emoji)
+        Tracker Schedule: \(tracker.schedule)
+        Type tracker: \(tracker.typeTracker)
+        Category: \(selectedCategory)
+        """)
         
         self.dismiss(animated: true, completion: nil)
     }
@@ -186,7 +193,7 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as! CreateNewCategoryCell
             
             cell.weekDaysDelegate = self
-
+            cell.delegate = self
             delegate?.selectTypeTracker(cell: cell)
             
             cell.navigationController = self.navigationController
@@ -316,14 +323,24 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - SelectedNameTrackerDelegate
 extension CreateNewTrackerViewController: SelectedNameTrackerDelegate {
     func sendSelectedNameTracker(text: String) {
         trackerName = text
     }
 }
 
+// MARK: - SelectedWeekDaysDelegate
 extension CreateNewTrackerViewController: SelectedWeekDaysDelegate {
     func sendSelectedWeekDays(_ selectedDays: [WeekDay]) {
         trackerSelectedWeekDays = selectedDays
     } 
+}
+
+// MARK: - CreateNewCategoryCellDelegate
+extension CreateNewTrackerViewController: CreateNewCategoryCellDelegate {
+    func categorySelected(_ category: String) {
+        self.selectedCategory = category
+        print("[CreateNewTrackerViewController:categorySelected] - Переданная категория: \(category)")
+    }
 }

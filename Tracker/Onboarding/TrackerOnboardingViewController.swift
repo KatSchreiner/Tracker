@@ -9,6 +9,7 @@ import UIKit
 
 final class TrackerOnboardingViewController: UIPageViewController {
     
+    // MARK: - Private Properties
     lazy var pages: [UIViewController] = {
         guard
             let imageFirst = UIImage(named: "onboarding_first"),
@@ -16,12 +17,12 @@ final class TrackerOnboardingViewController: UIPageViewController {
             return []
         }
         
-        let pageFirst = OnboardingViewController(
+        let pageFirst = SinglePageViewController(
             background: imageFirst,
             title: "Отслеживайте только то, что хотите"
         )
         
-        let pageTwo = OnboardingViewController(
+        let pageTwo = SinglePageViewController(
             background: imageTwo,
             title: "Даже если это не литры воды и йога"
         )
@@ -50,19 +51,14 @@ final class TrackerOnboardingViewController: UIPageViewController {
         return button
     }()
     
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        dataSource = self
-        delegate = self
-        
-        if let first = pages.first {
-            setViewControllers([first], direction: .forward, animated: true, completion: nil)
-        }
         
         setupView()
     }
     
+    // MARK: - IBAction
     @objc
     private func openMainScreen() {
         let mainTabBarController = MainTabBarController()
@@ -70,7 +66,15 @@ final class TrackerOnboardingViewController: UIPageViewController {
         present(mainTabBarController, animated: true)
     }
     
+    // MARK: - Private Methods
     private func setupView() {
+        dataSource = self
+        delegate = self
+        
+        if let first = pages.first {
+            setViewControllers([first], direction: .forward, animated: true, completion: nil)
+        }
+        
         view.addSubview(pageControl)
         view.addSubview(button)
         
@@ -89,31 +93,19 @@ final class TrackerOnboardingViewController: UIPageViewController {
 extension TrackerOnboardingViewController: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-
+        guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
         let previousIndex = viewControllerIndex - 1
-
-        guard previousIndex >= 0 else {
-            return pages.last
-        }
-
+        guard previousIndex >= 0 else { return pages.last }
+        
         return pages[previousIndex]
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
-        guard let viewControllerIndex = pages.firstIndex(of: viewController) else {
-            return nil
-        }
-
+        guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
         let nextIndex = viewControllerIndex + 1
-
-        guard nextIndex < pages.count else {
-            return pages.first
-        }
-
+        guard nextIndex < pages.count else { return pages.first }
+        
         return pages[nextIndex]
     }
 }

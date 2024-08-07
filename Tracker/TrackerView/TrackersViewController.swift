@@ -117,10 +117,10 @@ class TrackersViewController: UIViewController {
     
     // MARK: - Private Methods
     private func loadCoreData() {
-        try? trackerCategoryStore.saveCategoryToCoreData(title: "Важное")
-        
         categories = trackerCategoryStore.categories
         completedTrackers = trackerRecordStore.trackerRecord
+        
+        updateCollection() 
     }
     
     private func setupNavigation() {
@@ -332,12 +332,14 @@ extension TrackersViewController: CreateTrackerDelegate {
             trackers.append(tracker)
             
             categories = categories.filter { $0.title != category }
+            
             if !trackers.isEmpty {
                 categories.append(TrackerCategory(title: category, trackers: trackers))
             }
         } else {
             categories.append(TrackerCategory(title: category, trackers: [tracker]))
         }
+                
         updateCollection()
         updatePlaceholderVisibility(setHidden: true)
     }
@@ -377,6 +379,7 @@ extension TrackersViewController: UISearchBarDelegate {
     }
 }
 
+//MARK: - TrackerStoreDelegate
 extension TrackersViewController: TrackerStoreDelegate {
     func trackerStoreDidChange(_ store: TrackerStore) {
         categories = trackerCategoryStore.categories
@@ -384,6 +387,7 @@ extension TrackersViewController: TrackerStoreDelegate {
     }
 }
 
+//MARK: - TrackerRecordStoreDelegate
 extension TrackersViewController: TrackerRecordStoreDelegate {
     func recordDidChange() {
         completedTrackers = trackerRecordStore.trackerRecord

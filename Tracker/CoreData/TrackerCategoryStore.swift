@@ -56,7 +56,7 @@ final class TrackerCategoryStore: NSObject {
         let categories = try context.fetch(fetchRequest)
         
         if let existingCategory = categories.first {
-            print("Категория уже существует")
+            print("[TrackerCategoryStore: saveCategoryToCoreData] - Категория уже существует")
             return
         }
         

@@ -7,11 +7,10 @@
 
 import UIKit
 
-final class OnboardingViewController: UIViewController {
+final class SinglePageViewController: UIViewController {
     
     lazy var backgroundImage: UIImageView = {
         let background = UIImageView()
-        
         return background
     }()
     
@@ -21,7 +20,6 @@ final class OnboardingViewController: UIViewController {
         title.textColor = .ypWhiteNight
         title.numberOfLines = 2
         title.textAlignment = .center
-        
         return title
     }()
     
