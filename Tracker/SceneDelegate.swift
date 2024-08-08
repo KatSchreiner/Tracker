@@ -16,8 +16,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(windowScene: windowScene)
-        window?.makeKeyAndVisible()
-        window?.rootViewController = MainTabBarController()
+        
+        let hasOnboarded = UserDefaults.standard.bool(forKey: "hasOnboarded")
+                
+                if hasOnboarded == false {
+                    window?.rootViewController = TrackerOnboardingViewController(
+                        transitionStyle: .scroll,
+                        navigationOrientation: .horizontal
+                    )
+                    UserDefaults.standard.setValue(true, forKey: "hasOnboarded")
+                } else {
+                    window?.rootViewController = MainTabBarController()
+                }
+                
+                window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

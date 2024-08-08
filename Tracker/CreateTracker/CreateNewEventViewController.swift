@@ -24,17 +24,27 @@ final class CreateNewEventViewController: CreateNewTrackerViewController {
         let weekDay = WeekDay.allCases
         let week = weekDay
         
-        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: weekDay, typeTracker: .event)
+        let tracker = Tracker(
+            id: UUID(),
+            name: name,
+            color: color,
+            emoji: emoji,
+            schedule: weekDay,
+            typeTracker: .event
+        )
         
-        print("Передаваемые данные:")
-        print("Tracker ID: \(tracker.id)")
-        print("Tracker Name: \(tracker.name)")
-        print("Tracker Color: \(tracker.color)")
-        print("Tracker Emoji: \(tracker.emoji)")
-        print("Tracker Schedule: \(tracker.schedule)")
-        print("Tracker Type: \(tracker.typeTracker)")
+        createTrackerDelegate?.createTracker(tracker: tracker, category: selectedCategory)
         
-        createTrackerDelegate?.createTracker(tracker: tracker, category: trackerCategory)
+        print("""
+        [CreateNewTrackerViewController: didTapCreateButton] Передаваемые данные:
+        ID: \(tracker.id)
+        Name: \(tracker.name)
+        Color: \(tracker.color)
+        Emoji: \(tracker.emoji)
+        Tracker Schedule: \(tracker.schedule)
+        Type tracker: \(tracker.typeTracker)
+        Category: \(selectedCategory)
+        """)
         
         self.dismiss(animated: true, completion: nil)
     }
