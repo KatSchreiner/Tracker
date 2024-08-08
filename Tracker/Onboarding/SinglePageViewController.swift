@@ -9,12 +9,12 @@ import UIKit
 
 final class SinglePageViewController: UIViewController {
     
-    lazy var backgroundImage: UIImageView = {
+    private lazy var backgroundImage: UIImageView = {
         let background = UIImageView()
         return background
     }()
     
-    lazy var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         title.textColor = .ypWhiteNight
