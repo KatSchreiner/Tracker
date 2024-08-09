@@ -7,20 +7,28 @@
 
 import UIKit
 
+protocol CreateNewCategoryCellDelegate: AnyObject {
+    func categorySelected(_ category: String)
+}
+
 final class CreateNewCategoryCell: UICollectionViewCell {
     
     // MARK: Public Properties
     static let newCategoryIdentifier = "newCategoryCell"
     
+    weak var delegate: CreateNewCategoryCellDelegate?
     weak var weekDaysDelegate: SelectedWeekDaysDelegate?
     weak var navigationController: UINavigationController?
     
     var selectedWeekDays = [WeekDay]()
-    var selectedCategory = ""
+    var selectedCategory = "" {
+        didSet {
+            delegate?.categorySelected(selectedCategory)
+        }
+    }
         
     var typeTracker: TypeTracker?
         
-    // MARK: Private Properties
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .singleLine
@@ -115,14 +123,19 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         
         let section = SectionTable(rawValue: indexPath.row)
+        
         switch section {
+            
         case .category:
-            let categoryViewController = CategoryViewController()
-            categoryViewController.categoryDelegate = self
-            navigationController?.pushViewController(categoryViewController, animated: true)
+            let categoriesViewController = CategoriesViewController()
+            categoriesViewController.categoryDelegate = self
+            
+            navigationController?.pushViewController(categoriesViewController, animated: true)
+            
         case .schedule:
             let scheduleViewController = ScheduleViewController()
             scheduleViewController.scheduleDelegate = self
+            
             navigationController?.pushViewController(scheduleViewController, animated: true)
         case .none:
             break
@@ -156,5 +169,7 @@ extension CreateNewCategoryCell: CategoryViewControllerDelegate {
     func sendSelectedCategory(selectedCategory: String) {
         self.selectedCategory = selectedCategory
         tableView.reloadData()
+        
+        print("[CreateNewTrackerViewController: sendSelectedCategory] - Полученная категория: \(selectedCategory)")
     }
 }
