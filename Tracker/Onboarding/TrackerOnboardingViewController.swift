@@ -19,12 +19,12 @@ final class TrackerOnboardingViewController: UIPageViewController {
         
         let pageFirst = SinglePageViewController(
             background: imageFirst,
-            title: "Отслеживайте только то, что хотите"
+            title: "pagFirst".localized()
         )
         
         let pageTwo = SinglePageViewController(
             background: imageTwo,
-            title: "Даже если это не литры воды и йога"
+            title: "pageTwo".localized()
         )
         
         return [pageFirst, pageTwo]
@@ -45,7 +45,7 @@ final class TrackerOnboardingViewController: UIPageViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
         button.backgroundColor = .ypWhiteNight
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle("technologies".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(openMainScreen), for: .touchUpInside)
         return button

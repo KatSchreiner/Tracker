@@ -31,7 +31,7 @@ class ScheduleViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
-        doneButton.setTitle("Готово", for: .normal)
+        doneButton.setTitle("done".localized(), for: .normal)
         doneButton.setTitleColor(.ypWhiteDay, for: .normal)
         doneButton.backgroundColor = .ypWhiteNight
         doneButton.layer.cornerRadius = 16
@@ -68,7 +68,7 @@ class ScheduleViewController: UIViewController {
         }
         view.backgroundColor = .ypWhiteDay
         navigationItem.hidesBackButton = true
-        self.title = "Расписание"
+        self.title = "schedule".localized()
         
         addConstraintScheduleTableView()
         addConstraintDoneButton()

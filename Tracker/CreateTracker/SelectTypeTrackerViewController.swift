@@ -15,7 +15,7 @@ final class SelectTypeTrackerViewController: UIViewController {
     // MARK: - Private Properties
     private lazy var addNewHabit: UIButton = {
         let addNewHabit = UIButton(type: .custom)
-        addNewHabit.setTitle("Привычка", for: .normal)
+        addNewHabit.setTitle("habit".localized(), for: .normal)
         addNewHabit.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         addNewHabit.setTitleColor(.whiteDay, for: .normal)
         addNewHabit.layer.cornerRadius = 16
@@ -26,7 +26,7 @@ final class SelectTypeTrackerViewController: UIViewController {
     
     private lazy var irregularEvent: UIButton = {
         let irregularEvent = UIButton(type: .custom)
-        irregularEvent.setTitle("Нерегулярные события", for: .normal)
+        irregularEvent.setTitle("events".localized(), for: .normal)
         irregularEvent.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         irregularEvent.setTitleColor(.ypWhiteDay, for: .normal)
         irregularEvent.layer.cornerRadius = 16
@@ -67,7 +67,7 @@ final class SelectTypeTrackerViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .ypBlackNight
         
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = "create_tracker".localized()
         
         [stackView, addNewHabit, irregularEvent].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false

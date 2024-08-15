@@ -17,7 +17,7 @@ final class CategoryNameFieldCell: UICollectionViewCell {
         let textPadding = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textFieldNameTracker.frame.height))
         textFieldNameTracker.leftView = textPadding
         textFieldNameTracker.leftViewMode = .always
-        textFieldNameTracker.placeholder = "Введите название трекера"
+        textFieldNameTracker.placeholder = "name_tracker".localized()
         textFieldNameTracker.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textFieldNameTracker.textAlignment = .left
         textFieldNameTracker.textColor = .ypWhiteNight

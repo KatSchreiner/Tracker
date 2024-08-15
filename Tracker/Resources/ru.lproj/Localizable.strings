@@ -1,0 +1,46 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Екатерина Шрайнер on 10.08.2024.
+  
+*/
+
+"trackers" = "Трекеры";
+"statistics" = "Статистика";
+"search" = "Поиск";
+"what_track" = "Что будем отслеживать?";
+"nothing_found" = "Ничего не найдено";
+"pagFirst" = "Отслеживайте только то, что хотите";
+"pageTwo" = "Даже если это не литры воды и йога";
+"technologies" = "Вот это технологии!";
+"habit" = "Привычка";
+"events" = "Нерегулярные события";
+"create_tracker" = "Создание трекера";
+"create" = "Создать";
+"cancel" = "Отменить";
+"color" = "Цвет";
+"new_habit" = "Новая привычка";
+"new_event" = "Новое нерегулярное событие";
+"name_tracker" = "Введите название трекера";
+"category" = "Категория";
+"schedule" = "Расписание";
+"done" = "Готово";
+"add_category" = "Добавить категорию";
+"no_categories" = "Привычки и события можно объединить по смыслу";
+"category_name" = "Введите название категории";
+"weekday_monday" = "Понедельник";
+"weekday_tuesday" = "Вторник";
+"weekday_wednesday" = "Среда";
+"weekday_thursday" = "Четверг";
+"weekday_friday" = "Пятница";
+"weekday_saturday" = "Суббота";
+"weekday_sunday" = "Воскресенье";
+"every_day" = "Каждый день";
+"mon" = "Пн";
+"tue" = "Вт";
+"wed" = "Ср";
+"thu" = "Чт";
+"fri" = "Пт";
+"sat" = "Сб";
+"sun" = "Вс";

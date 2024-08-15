@@ -1,10 +1,3 @@
-//
-//  TrackerCategoryStore.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.07.2024.
-//
-
 import CoreData
 import UIKit
 
@@ -65,6 +58,35 @@ final class TrackerCategoryStore: NSObject {
         categoryCoreData.tracker = NSSet()
         
         try context.save()
+    }
+    
+    func deleteCategoryFromCoreData(title: String, tracker: Tracker) throws {
+        let coreData = try fetchCategoryByTitle(title: title)
+        
+        var existingTrackers = coreData.tracker?.allObjects as! [TrackerCoreData]
+        if let index = existingTrackers.firstIndex(where: { $0.id == tracker.id }) {
+            existingTrackers.remove(at: index)
+            print("Трекер с id: \(tracker.id) успешно удален из категории '\(title)'.")
+        } else {
+            print("Трекер с id: \(tracker.id) не найден в категории '\(title)'.")
+        }
+        coreData.tracker = NSSet(array: existingTrackers)
+        
+        try context.save()
+        print("Остальные трекеры сохранены. Количество трекеров в категории '\(title)': \(existingTrackers.count)")
+        
+        if existingTrackers.isEmpty {
+            context.delete(coreData)
+            do {
+                try context.save()
+                print("Категория '\(title)' успешно удалена, так как в ней не осталось трекеров.")
+            } catch {
+                context.rollback()
+                print("Не удалось сохранить изменения. Ошибка: \(error.localizedDescription)")
+            }
+        } else {
+            print("Категория '\(title)' не пуста и не может быть удалена.")
+        }
     }
     
     func fetchCategoryByTitle(title: String) throws -> TrackerCategoryCoreData {

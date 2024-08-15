@@ -32,7 +32,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var addNewCategoryButton: UIButton = {
         let addNewCategoryButton = UIButton(type: .custom)
-        addNewCategoryButton.setTitle("Добавить категорию", for: .normal)
+        addNewCategoryButton.setTitle("add_category".localized(), for: .normal)
         addNewCategoryButton.setTitleColor(.ypWhiteDay, for: .normal)
         addNewCategoryButton.backgroundColor = .ypWhiteNight
         addNewCategoryButton.layer.cornerRadius = 16
@@ -43,7 +43,7 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = "no_categories".localized()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypWhiteNight
         label.numberOfLines = 2
@@ -88,7 +88,7 @@ final class CategoriesViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .ypWhiteDay
         navigationItem.hidesBackButton = true
-        title = "Категория"
+        title = "category".localized()
         
         [tableView, addNewCategoryButton, placeholderStackView].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false

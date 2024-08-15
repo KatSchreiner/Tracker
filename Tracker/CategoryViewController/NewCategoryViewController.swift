@@ -27,7 +27,7 @@ final class NewCategoryViewController: UIViewController {
         categoryTextField.leftViewMode = .always
         categoryTextField.textAlignment = .left
         categoryTextField.backgroundColor = .ypLightGray
-        categoryTextField.placeholder = "Введите название категории"
+        categoryTextField.placeholder = "category_name".localized()
         categoryTextField.clearButtonMode = .whileEditing
         categoryTextField.layer.cornerRadius = 16
         categoryTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingDidEnd)
@@ -37,7 +37,7 @@ final class NewCategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
         doneButton.backgroundColor = .ypWhiteNight
-        doneButton.setTitle("Готово", for: .normal)
+        doneButton.setTitle("done".localized(), for: .normal)
         doneButton.setTitleColor(.ypWhiteDay, for: .normal)
         doneButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         doneButton.layer.cornerRadius = 16
@@ -82,7 +82,7 @@ final class NewCategoryViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .ypWhiteDay
         navigationItem.hidesBackButton = true
-        title = "Категория"
+        title = "category".localized()
         
         [categoryTextField, doneButton].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false

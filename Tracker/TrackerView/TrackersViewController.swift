@@ -1,9 +1,3 @@
-//
-//  ViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.06.2024.
-//
 import UIKit
 
 class TrackersViewController: UIViewController {
@@ -16,6 +10,8 @@ class TrackersViewController: UIViewController {
     lazy var currentCategories: [TrackerCategory] = {
         showTrackersInCurrentDate()
     }()
+    
+    var pinnedTrackers: Set<UUID> = []
     
     // MARK: - Private Properties
     private let trackerStore = TrackerStore()
@@ -120,7 +116,7 @@ class TrackersViewController: UIViewController {
         categories = trackerCategoryStore.categories
         completedTrackers = trackerRecordStore.trackerRecord
         
-        updateCollection() 
+        updateCollection()
     }
     
     private func setupNavigation() {
@@ -277,7 +273,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         
         let isTrackerComplete = isTrackerComplete(trackerId: tracker.id)
         
-        cell.configureAddButton(tracker: tracker, indexPath: indexPath, completedForCurrentDate: completedForCurrentDate, isTrackerCompleted: isTrackerComplete, typeTracker: typeTracker)
+        let isPinned = (try? trackerStore.fetchTrackerById(id: tracker.id))?.isPinned ?? false
+        
+        cell.configureAddButton(tracker: tracker, indexPath: indexPath, completedForCurrentDate: completedForCurrentDate, isTrackerCompleted: isTrackerComplete, typeTracker: typeTracker, isPinned: isPinned)
         
         
         return cell
@@ -315,6 +313,134 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+    }
+}
+
+// MARK: ContextMENU - UICollectionViewDelegate
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else {
+            return nil
+        }
+        let parameters = UIPreviewParameters()
+        let previewView = UITargetedPreview(view: cell.bodyView, parameters: parameters)
+        return previewView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPath: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard indexPath.count > 0 else { return nil }
+        
+        let tracker = currentCategories[indexPath[0].section].trackers[indexPath[0].row]
+        
+        return UIContextMenuConfiguration(actionProvider: { suggestedActions in
+            let isPinned = self.pinnedTrackers.contains(tracker.id)
+                        
+            let pinAction = UIAction(title: isPinned ? "Открепить" : "Закрепить") { action in
+                
+                if isPinned {
+                    self.unpinTracker(indexPath: indexPath[0])
+                } else {
+                    self.pinTracker(indexPath: indexPath[0])
+                }
+                
+                self.updateCollection()
+            }
+            
+            let editAction = UIAction(title: "Редактировать", identifier: nil, discoverabilityTitle: nil, state: .off) { action in
+                self.editTracker(tracker: tracker)
+            }
+            
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { action in
+                self.showDeleteConfirmationAlert(indexPath: indexPath[0])
+            }
+            
+            return UIMenu(title: "", children: [pinAction, editAction, deleteAction])
+            
+        })
+    }
+    
+    private func pinTracker(indexPath: IndexPath) {
+        let tracker = currentCategories[indexPath.section].trackers[indexPath.row]
+        
+        do {
+            try trackerStore.pinTracker(id: tracker.id)
+            pinnedTrackers.insert(tracker.id)
+            updateCategoriesAfterPinning()
+            updateCollection()
+        } catch {
+            print("Ошибка при закреплении трекера: \(error)")
+        }
+        
+        print("Закреплен трекер с id: \(tracker.id)")
+    }
+    
+    private func unpinTracker(indexPath: IndexPath) {
+        let tracker = currentCategories[indexPath.section].trackers[indexPath.row]
+        print("Пытаемся открепить трекер с id: \(tracker.id)")
+        
+        
+        do {
+            try trackerStore.unpinTracker(id: tracker.id)
+            pinnedTrackers.remove(tracker.id)
+            updateCategoriesAfterPinning()
+            updateCollection()
+            print("Трекер с id \(tracker.id) успешно откреплен")
+        } catch {
+            print("Ошибка при откреплении трекера: \(error)")
+        }
+    }
+    
+    private func editTracker(tracker: Tracker) {
+        
+        let createNewTrackerVC = EditTrackerViewController()
+        createNewTrackerVC.createTrackerDelegate = self
+        createNewTrackerVC.isEdit = true
+        createNewTrackerVC.getDataForEdit(tracker: tracker)
+        
+        let navigationController = UINavigationController(rootViewController: createNewTrackerVC)
+        present(navigationController, animated: true, completion: nil)
+    }
+    
+    private func deleteTracker(indexPath: IndexPath) {
+        let trackerToDelete = currentCategories[indexPath.section].trackers[indexPath.row].id
+        let categoryToDelete = currentCategories[indexPath.section].title
+        let tracker = currentCategories[indexPath.section].trackers[indexPath.row]
+        
+        try? trackerStore.deleteTrackerFromCoreData(id: trackerToDelete)
+        try?  trackerCategoryStore.deleteCategoryFromCoreData(title: categoryToDelete, tracker: tracker)
+        
+        loadCoreData()
+        updateCollection()
+    }
+    
+    private func showDeleteConfirmationAlert(indexPath: IndexPath) {
+        let alertController = UIAlertController(
+            title: "Уверены что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        
+        let deleteAction = UIAlertAction(
+            title: "Удалить",
+            style: .destructive) { [weak self] _ in
+                self?.deleteTracker(indexPath: indexPath)
+            }
+        
+        let cancelAction = UIAlertAction(
+            title: "Отменить",
+            style: .cancel,
+            handler: nil
+        )
+        
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    private func updateCategoriesAfterPinning() {
+        currentCategories = showTrackersInCurrentDate()
     }
 }
 

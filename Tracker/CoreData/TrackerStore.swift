@@ -1,10 +1,3 @@
-//
-//  TrackerStore.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.07.2024.
-//
-
 import CoreData
 import UIKit
 
@@ -60,6 +53,39 @@ final class TrackerStore: NSObject {
         try context.save()
     }
     
+    func deleteTrackerFromCoreData(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        
+        context.delete(trackerCoreData)
+        do {
+            try context.save()
+            print("Трекер с id: \(id) успешно удален из Core Data.")
+        } catch {
+            context.rollback()
+            print("Не удалось сохранить изменения. Ошибка: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateTracker(_ tracker: Tracker, category: String) throws {
+        let existingTracker = try fetchTrackerById(id: tracker.id)
+        
+        existingTracker.name = tracker.name
+        existingTracker.emoji = tracker.emoji
+        existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
+        existingTracker.schedule = weekDayTransformer.transformedValue(tracker.schedule) as? NSObject
+        
+        let existingCategory = try fetchCategoryByTitle(title: category)
+        existingTracker.category = existingCategory
+        
+        do {
+            try context.save()
+            print("Трекер с id: \(tracker.id) успешно обновлен в Core Data.")
+        } catch {
+            context.rollback()
+            throw TrackerStoreError.fetchTrackerByIdError(description: "Не удалось обновить трекер. Ошибка: \(error.localizedDescription)")
+        }
+    }
+    
     func fetchTrackerById(id: UUID) throws -> TrackerCoreData {
         let request = TrackerCoreData.fetchRequest()
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
@@ -90,7 +116,9 @@ final class TrackerStore: NSObject {
             color: colorConverted,
             emoji: emoji,
             schedule: schedule,
-            typeTracker: .habit)
+            typeTracker: .habit, 
+            isPinned: false
+        )
     }
     
     // MARK: - Private Methods
@@ -109,6 +137,18 @@ final class TrackerStore: NSObject {
         trackerCoreData.category = category // Связать с категорией
         
         return trackerCoreData
+    }
+    
+    func pinTracker(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        trackerCoreData.isPinned = true
+        try context.save()
+    }
+    
+    func unpinTracker(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        trackerCoreData.isPinned = false
+        try context.save()
     }
 }
 

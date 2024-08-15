@@ -17,7 +17,7 @@ final class StatisticViewController: UIViewController {
     }
 
     private func setupNavigation() {
-        title = "Статистика"
+        title = "statistics".localized()
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     private func setupView() {

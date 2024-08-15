@@ -1,10 +1,3 @@
-//
-//  CreateNewTrackerViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 05.07.2024.
-//
-
 import UIKit
 
 class CreateNewTrackerViewController: UIViewController {
@@ -18,6 +11,8 @@ class CreateNewTrackerViewController: UIViewController {
     var trackerName: String?
     var selectedEmoji: String?
     var selectedColor: UIColor?
+    
+    var isEdit = false
     
     // MARK: - Private Properties
     private var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -41,7 +36,7 @@ class CreateNewTrackerViewController: UIViewController {
         return collectionView
     }()
     
-    private lazy var createButton: UIButton = {
+    lazy var createButton: UIButton = {
         let createButton = UIButton(type: .custom)
         createButton.layer.cornerRadius = 16
         createButton.backgroundColor = .ypGray
@@ -86,13 +81,13 @@ class CreateNewTrackerViewController: UIViewController {
     }
     
     @objc func didTapCreateButton() {
-        guard 
+        guard
             let name = trackerName,
             let emoji = selectedEmoji,
             let color = selectedColor
         else { return }
         
-        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: trackerSelectedWeekDays, typeTracker: .habit)
+        let tracker = Tracker(id: UUID(), name: name, color: color, emoji: emoji, schedule: trackerSelectedWeekDays, typeTracker: .habit, isPinned: false)
         
         createTrackerDelegate?.createTracker(tracker: tracker, category: selectedCategory)
         
@@ -115,7 +110,7 @@ class CreateNewTrackerViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    private func setupView() {
+    func setupView() {
         view.backgroundColor = .ypWhiteDay
                 
         [createButton, cancelButton, stackView, collectionView].forEach { view in
@@ -334,7 +329,7 @@ extension CreateNewTrackerViewController: SelectedNameTrackerDelegate {
 extension CreateNewTrackerViewController: SelectedWeekDaysDelegate {
     func sendSelectedWeekDays(_ selectedDays: [WeekDay]) {
         trackerSelectedWeekDays = selectedDays
-    } 
+    }
 }
 
 // MARK: - CreateNewCategoryCellDelegate
