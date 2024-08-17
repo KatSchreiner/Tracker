@@ -1,10 +1,3 @@
-//
-//  TrackerOnboardingViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 02.08.2024.
-//
-
 import UIKit
 
 final class TrackerOnboardingViewController: UIPageViewController {
@@ -34,7 +27,7 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let pc = UIPageControl()
         pc.numberOfPages = pages.count
         pc.currentPage = 0
-        pc.currentPageIndicatorTintColor = .yBlack
+        pc.currentPageIndicatorTintColor = .black
         pc.pageIndicatorTintColor = .yGray
         pc.translatesAutoresizingMaskIntoConstraints = false
         return pc
@@ -44,7 +37,8 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
-        button.backgroundColor = .yBlack
+        button.backgroundColor = .black
+        button.setTitleColor(.white, for: .normal)
         button.setTitle("technologies".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(openMainScreen), for: .touchUpInside)

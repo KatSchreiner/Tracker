@@ -147,11 +147,12 @@ class CreateNewTrackerViewController: UIViewController {
     private func changeColorButtonIfTrackerSuccess() {
         if let name = trackerName, let emoji = selectedEmoji, let color = selectedColor {
             createButton.backgroundColor = .yBlack
-            createButton.titleLabel?.textColor = .black
+            createButton.titleLabel?.textColor = .yWhite
             createButton.isUserInteractionEnabled = true
         } else {
             createButton.backgroundColor = .yGray
             createButton.isUserInteractionEnabled = false
+            createButton.titleLabel?.textColor = .white
         }
     }
 }

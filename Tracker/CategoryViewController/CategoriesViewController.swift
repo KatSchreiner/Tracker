@@ -130,6 +130,8 @@ final class CategoriesViewController: UIViewController {
             addNewCategoryButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
+    
+
 }
 
 //MARK: - UITableViewDataSource

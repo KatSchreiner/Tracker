@@ -1,10 +1,3 @@
-//
-//  OnboardingViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 02.08.2024.
-//
-
 import UIKit
 
 final class SinglePageViewController: UIViewController {
@@ -17,7 +10,7 @@ final class SinglePageViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        title.textColor = .yBlack
+        title.textColor = .black
         title.numberOfLines = 2
         title.textAlignment = .center
         return title

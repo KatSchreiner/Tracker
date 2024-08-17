@@ -8,6 +8,8 @@
 import UIKit
 
 extension UIColor {
+    //static var yBlackalpha: UIColor { UIColor(named: "YBlackAlpha") ?? UIColor.gray }
+        
     static var ypColor1: UIColor { UIColor(named: "Color1") ?? UIColor.red}
     static var ypColor2: UIColor { UIColor(named: "Color2") ?? UIColor.orange}
     static var ypColor3: UIColor { UIColor(named: "Color3") ?? UIColor.blue}

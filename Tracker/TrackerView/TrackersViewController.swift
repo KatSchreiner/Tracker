@@ -12,7 +12,12 @@ class TrackersViewController: UIViewController {
     
     var pinnedTrackers: Set<UUID> = []
     
-    var selectedFilter: TrackerFilter?
+    var selectedFilter: TrackerFilter? {
+        didSet {
+            updateColorTextFilterButton()
+            saveSelectedFilter()
+        }
+    }
 
         
     // MARK: - Private Properties
@@ -34,7 +39,8 @@ class TrackersViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_Ru")
+        datePicker.locale = .current
+        datePicker.calendar = .current
         datePicker.calendar.firstWeekday = 2
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         
@@ -55,6 +61,7 @@ class TrackersViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.delegate = self
         searchController.hidesNavigationBarDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.searchBarStyle = .default
         searchController.searchBar.backgroundImage = UIImage()
         searchController.searchBar.placeholder = "Поиск"
@@ -119,6 +126,7 @@ class TrackersViewController: UIViewController {
         trackerRecordStore.delegate = self
         
         loadCoreData()
+        loadSelectedFilter()
     }
     
     // MARK: - IBAction
@@ -131,6 +139,7 @@ class TrackersViewController: UIViewController {
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
+        
         if let selectedFilter = selectedFilter {
             didSelectFilter(selectedFilter)
         } else {
@@ -162,6 +171,7 @@ class TrackersViewController: UIViewController {
     private func setupNavigation() {
         title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationItem.largeTitleDisplayMode = .always
         
         navigationItem.leftBarButtonItem = addButton
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
@@ -177,16 +187,16 @@ class TrackersViewController: UIViewController {
         
         addConstraint()
         
-        updatePlaceholderVisibilityForSearch(setHidden: true)
+        updateTrackersPlaceholderVisibility()
     }
     
     private func addConstraint() {
         NSLayoutConstraint.activate([
-            datePicker.widthAnchor.constraint(equalToConstant: 95),
+            datePicker.widthAnchor.constraint(equalToConstant: 100),
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: filterButton.bottomAnchor, constant: -16),
             placeholderForTrackers.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             placeholderForTrackers.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             placeholderForTrackers.widthAnchor.constraint(equalToConstant: 80),
@@ -203,12 +213,35 @@ class TrackersViewController: UIViewController {
             filterButton.heightAnchor.constraint(equalToConstant: 50),
             filterButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
-            
         ])
     }
     
     private func updateFilterButtonVisibility() {
         filterButton.isHidden = currentCategories.isEmpty
+    }
+    
+    private func updateColorTextFilterButton() {
+        if selectedFilter == .allTrackers {
+            filterButton.setTitleColor(UIColor.white, for: .normal)
+        } else {
+            filterButton.setTitleColor(.yRed, for: .normal)
+        }
+    }
+    
+    private func saveSelectedFilter() {
+        guard let filter = selectedFilter else {
+            UserDefaults.standard.removeObject(forKey: "SelectedFilter")
+            return
+        }
+        UserDefaults.standard.set(filter.rawValue, forKey: "selectedFilter")
+    }
+    
+    private func loadSelectedFilter() {
+        let filterValue = UserDefaults.standard.integer(forKey: "selectedFilter")
+        if let filter = TrackerFilter(rawValue: filterValue) {
+            selectedFilter = filter
+            didSelectFilter(filter)
+        }
     }
     
     private func showTrackersInCurrentDate() -> [TrackerCategory] {
@@ -235,6 +268,7 @@ class TrackersViewController: UIViewController {
         currentCategories = showTrackersInCurrentDate()
         collectionView.reloadData()
         updateFilterButtonVisibility()
+        updateTrackersPlaceholderVisibility()
     }
     
     private func updatePlaceholderVisibility(setHidden: Bool) {
@@ -246,6 +280,33 @@ class TrackersViewController: UIViewController {
         placeholderForSearch.isHidden = setHidden
         labelIfSearchNotFound.isHidden = setHidden
     }
+    
+    private func updateTrackersPlaceholderVisibility() {
+        if categories.isEmpty {
+            updatePlaceholderVisibility(setHidden: false)
+            updatePlaceholderVisibilityForSearch(setHidden: true)
+        } else {
+            updatePlaceholderVisibility(setHidden: true)
+        }
+    }
+    
+    private func updateSearchPlaceholderVisibility() {
+        if isSearching && currentCategories.isEmpty {
+            updatePlaceholderVisibility(setHidden: true)
+            updatePlaceholderVisibilityForSearch(setHidden: false)
+        } else {
+            updatePlaceholderVisibilityForSearch(setHidden: true)
+        }
+    }
+    
+    private func updateFilterPlaceholderVisibility() {
+            if isFiltering && currentCategories.isEmpty {
+                updatePlaceholderVisibility(setHidden: true)
+                updatePlaceholderVisibilityForSearch(setHidden: false)
+            } else {
+                updatePlaceholderVisibilityForSearch(setHidden: true)
+            }
+        }
 }
 
 // MARK: - TrackerCompletionDelegate
@@ -292,11 +353,11 @@ extension TrackersViewController: TrackerCompletionDelegate {
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        if currentCategories.isEmpty && !isSearching && isFiltering {
+        if currentCategories.isEmpty {
             updatePlaceholderVisibility(setHidden: false)
+            updateTrackersPlaceholderVisibility()
             return 0
         } else {
-            updatePlaceholderVisibility(setHidden: true)
             return currentCategories.count
         }
     }
@@ -535,11 +596,7 @@ extension TrackersViewController: UISearchBarDelegate {
             currentCategories = showTrackersInCurrentDate()
         }
         
-        if currentCategories.isEmpty {
-            updatePlaceholderVisibilityForSearch(setHidden: false)
-        } else {
-            updatePlaceholderVisibilityForSearch(setHidden: true)
-        }
+        updateSearchPlaceholderVisibility()
         
         collectionView.reloadData()
     }
@@ -587,12 +644,8 @@ extension TrackersViewController: FilterTrackersDelegate {
             log("Показ невыполненных трекеров.")
         }
         
-        if currentCategories.isEmpty {
-            updatePlaceholderVisibilityForSearch(setHidden: false)
-        } else {
-            updatePlaceholderVisibilityForSearch(setHidden: true)
-        }
-        
+        updateFilterPlaceholderVisibility()
+
         collectionView.reloadData()
         
         isFiltering = false

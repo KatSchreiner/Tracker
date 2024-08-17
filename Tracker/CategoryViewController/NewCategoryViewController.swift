@@ -1,10 +1,3 @@
-//
-//  NewCategoryViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 08.08.2024.
-//
-
 import UIKit
 
 protocol NewCategoryDelegate: AnyObject {
@@ -62,15 +55,7 @@ final class NewCategoryViewController: UIViewController {
     
     @objc
     func textFieldDidChange(_ textField: UITextField) {
-        guard let text = categoryTextField.text else { return }
-        
-        if text.isEmpty {
-            doneButton.isEnabled = false
-            doneButton.backgroundColor = .yLightGray
-        } else {
-            doneButton.isEnabled = true
-            doneButton.backgroundColor = .yBlack
-        }
+        updateDoneButtonState()
     }
     
     @objc
@@ -90,6 +75,7 @@ final class NewCategoryViewController: UIViewController {
         }
         
         addConstraint()
+        updateDoneButtonState()
         hideKeyboard()
     }
     
@@ -97,6 +83,18 @@ final class NewCategoryViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
+    }
+    
+    private func updateDoneButtonState() {
+        if let text = categoryTextField.text, !text.isEmpty {
+            doneButton.isUserInteractionEnabled = true
+            doneButton.backgroundColor = .yBlack
+            doneButton.setTitleColor(.yWhite, for: .normal)
+        } else {
+            doneButton.isUserInteractionEnabled = false
+            doneButton.backgroundColor = .yGray
+            doneButton.setTitleColor(.white, for: .normal)
+        }
     }
     
     private func addConstraint() {

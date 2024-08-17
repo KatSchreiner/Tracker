@@ -1,17 +1,10 @@
-//
-//  TabBarViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.06.2024.
-//
-
 import Foundation
 import UIKit
 
 final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        addTopBorderTabBar(color: .yWhite, heigth: 1.0)
+        setupView()
         configureTabs()
     }
     
@@ -33,5 +26,15 @@ final class MainTabBarController: UITabBarController {
         let navigationStatisticViewController = UINavigationController(rootViewController: statisticViewController)
         
         self.viewControllers = [navigationTrackersViewController, navigationStatisticViewController]
+    }
+    
+    private func setupView() {
+        tabBar.backgroundColor = .clear
+        tabBar.unselectedItemTintColor = .yGray
+        
+        let topBorderTabBar = CALayer()
+        topBorderTabBar.frame = CGRect(x: 0, y: 0, width: tabBar.frame.size.width, height: 1.0)
+        topBorderTabBar.backgroundColor = UIColor.black.withAlphaComponent(0.3).cgColor
+        tabBar.layer.addSublayer(topBorderTabBar)
     }
 }

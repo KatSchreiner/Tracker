@@ -1,10 +1,3 @@
-//
-//  StatisticViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.06.2024.
-//
-
 import Foundation
 import UIKit
 
