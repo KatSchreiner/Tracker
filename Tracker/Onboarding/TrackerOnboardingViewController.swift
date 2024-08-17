@@ -34,8 +34,8 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let pc = UIPageControl()
         pc.numberOfPages = pages.count
         pc.currentPage = 0
-        pc.currentPageIndicatorTintColor = .ypWhiteNight
-        pc.pageIndicatorTintColor = .ypGray
+        pc.currentPageIndicatorTintColor = .yBlack
+        pc.pageIndicatorTintColor = .yGray
         pc.translatesAutoresizingMaskIntoConstraints = false
         return pc
     }()
@@ -44,7 +44,7 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
-        button.backgroundColor = .ypWhiteNight
+        button.backgroundColor = .yBlack
         button.setTitle("technologies".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(openMainScreen), for: .touchUpInside)

@@ -26,7 +26,7 @@ final class NewCategoryViewController: UIViewController {
         categoryTextField.leftView = textPadding
         categoryTextField.leftViewMode = .always
         categoryTextField.textAlignment = .left
-        categoryTextField.backgroundColor = .ypLightGray
+        categoryTextField.backgroundColor = .yBackground
         categoryTextField.placeholder = "category_name".localized()
         categoryTextField.clearButtonMode = .whileEditing
         categoryTextField.layer.cornerRadius = 16
@@ -36,9 +36,9 @@ final class NewCategoryViewController: UIViewController {
     
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
-        doneButton.backgroundColor = .ypWhiteNight
+        doneButton.backgroundColor = .yBlack
         doneButton.setTitle("done".localized(), for: .normal)
-        doneButton.setTitleColor(.ypWhiteDay, for: .normal)
+        doneButton.setTitleColor(.yWhite, for: .normal)
         doneButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         doneButton.layer.cornerRadius = 16
         doneButton.addTarget(self, action: #selector(didTapSaveCategory), for: .touchUpInside)
@@ -66,10 +66,10 @@ final class NewCategoryViewController: UIViewController {
         
         if text.isEmpty {
             doneButton.isEnabled = false
-            doneButton.backgroundColor = .ypWhiteDay
+            doneButton.backgroundColor = .yLightGray
         } else {
             doneButton.isEnabled = true
-            doneButton.backgroundColor = .ypWhiteNight
+            doneButton.backgroundColor = .yBlack
         }
     }
     
@@ -80,7 +80,7 @@ final class NewCategoryViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .yWhite
         navigationItem.hidesBackButton = true
         title = "category".localized()
         

@@ -21,6 +21,6 @@ final class StatisticViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     private func setupView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .yWhite
     }
 }

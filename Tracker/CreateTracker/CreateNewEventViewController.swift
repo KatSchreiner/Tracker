@@ -5,7 +5,7 @@ final class CreateNewEventViewController: CreateNewTrackerViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "new_event".localized()
-        view.backgroundColor = .white
+        view.backgroundColor = .yWhite
         navigationItem.hidesBackButton = true
         
         self.delegate = self

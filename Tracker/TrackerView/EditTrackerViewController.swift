@@ -20,7 +20,7 @@ final class EditTrackerViewController: CreateNewHabitViewController {
         super.setupView()
         
         createButton.isEnabled = true
-        createButton.backgroundColor = .ypWhiteNight
+        createButton.backgroundColor = .yBlack
         createButton.setTitle("Сохранить", for: .normal)
         
         title = "Редактирование привычки"

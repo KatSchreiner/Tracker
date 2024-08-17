@@ -39,9 +39,9 @@ class CreateNewTrackerViewController: UIViewController {
     lazy var createButton: UIButton = {
         let createButton = UIButton(type: .custom)
         createButton.layer.cornerRadius = 16
-        createButton.backgroundColor = .ypGray
+        createButton.backgroundColor = .yGray
         createButton.setTitle("Создать", for: .normal)
-        createButton.setTitleColor(.ypWhiteDay, for: .normal)
+        createButton.setTitleColor(.white, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         return createButton
@@ -50,12 +50,12 @@ class CreateNewTrackerViewController: UIViewController {
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton(type: .custom)
         cancelButton.layer.cornerRadius = 16
-        cancelButton.backgroundColor = .ypWhiteDay
+        cancelButton.backgroundColor = .yWhite
         cancelButton.setTitle("Отменить", for: .normal)
-        cancelButton.setTitleColor(.ypRed, for: .normal)
+        cancelButton.setTitleColor(.yRed, for: .normal)
         cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         cancelButton.layer.borderWidth = 1
-        cancelButton.layer.borderColor = UIColor.ypRed.cgColor
+        cancelButton.layer.borderColor = UIColor.yRed.cgColor
         cancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         return cancelButton
     }()
@@ -111,7 +111,7 @@ class CreateNewTrackerViewController: UIViewController {
     
     // MARK: - Private Methods
     func setupView() {
-        view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .yWhite
                 
         [createButton, cancelButton, stackView, collectionView].forEach { view in
             view.translatesAutoresizingMaskIntoConstraints = false
@@ -146,10 +146,11 @@ class CreateNewTrackerViewController: UIViewController {
     
     private func changeColorButtonIfTrackerSuccess() {
         if let name = trackerName, let emoji = selectedEmoji, let color = selectedColor {
-            createButton.backgroundColor = .ypWhiteNight
+            createButton.backgroundColor = .yBlack
+            createButton.titleLabel?.textColor = .black
             createButton.isUserInteractionEnabled = true
         } else {
-            createButton.backgroundColor = .ypGray
+            createButton.backgroundColor = .yGray
             createButton.isUserInteractionEnabled = false
         }
     }

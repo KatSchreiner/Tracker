@@ -8,17 +8,6 @@
 import UIKit
 
 extension UIColor {
-    static var ypBackgroundDay: UIColor { UIColor(named: "BackgroundDay") ?? UIColor.darkGray }
-    static var ypBackgroundNight: UIColor { UIColor(named: "BackgroundNight") ?? UIColor.darkGray }
-    static var ypBlackDay: UIColor { UIColor(named: "BlackDay") ?? UIColor.black }
-    static var ypBlackNight: UIColor { UIColor(named: "BlackNight") ?? UIColor.white }
-    static var ypBlue: UIColor { UIColor(named: "Blue") ?? UIColor.blue }
-    static var ypGray: UIColor { UIColor(named: "Gray") ?? UIColor.gray }
-    static var ypLightGray: UIColor { UIColor(named: "LightGray") ?? UIColor.lightGray }
-    static var ypRed: UIColor { UIColor(named: "Red") ?? UIColor.red }
-    static var ypWhiteDay: UIColor { UIColor(named: "WhiteDay") ?? UIColor.white }
-    static var ypWhiteNight: UIColor { UIColor(named: "WhiteNight") ?? UIColor.black }
-    
     static var ypColor1: UIColor { UIColor(named: "Color1") ?? UIColor.red}
     static var ypColor2: UIColor { UIColor(named: "Color2") ?? UIColor.orange}
     static var ypColor3: UIColor { UIColor(named: "Color3") ?? UIColor.blue}

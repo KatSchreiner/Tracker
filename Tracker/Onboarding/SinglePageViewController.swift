@@ -17,7 +17,7 @@ final class SinglePageViewController: UIViewController {
     private lazy var titleLabel: UILabel = {
         let title = UILabel()
         title.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        title.textColor = .ypWhiteNight
+        title.textColor = .yBlack
         title.numberOfLines = 2
         title.textAlignment = .center
         return title

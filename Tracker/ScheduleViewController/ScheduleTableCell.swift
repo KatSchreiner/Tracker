@@ -13,7 +13,7 @@ class ScheduleTableCell: UITableViewCell {
     lazy var daySwitch: UISwitch = {
         let daySwitch = UISwitch()
         daySwitch.setOn(false, animated: true)
-        daySwitch.onTintColor = .ypBlue
+        daySwitch.onTintColor = .yBlue
         return daySwitch
     }()
     

@@ -20,8 +20,8 @@ final class CategoryNameFieldCell: UICollectionViewCell {
         textFieldNameTracker.placeholder = "name_tracker".localized()
         textFieldNameTracker.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textFieldNameTracker.textAlignment = .left
-        textFieldNameTracker.textColor = .ypWhiteNight
-        textFieldNameTracker.backgroundColor = .ypLightGray
+        textFieldNameTracker.textColor = .yBlack
+        textFieldNameTracker.backgroundColor = .yBackground
         textFieldNameTracker.layer.cornerRadius = 16
         textFieldNameTracker.rightView = clearButton
         textFieldNameTracker.rightViewMode = .whileEditing

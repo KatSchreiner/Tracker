@@ -17,9 +17,9 @@ final class SelectTypeTrackerViewController: UIViewController {
         let addNewHabit = UIButton(type: .custom)
         addNewHabit.setTitle("habit".localized(), for: .normal)
         addNewHabit.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        addNewHabit.setTitleColor(.whiteDay, for: .normal)
+        addNewHabit.setTitleColor(.yWhite, for: .normal)
         addNewHabit.layer.cornerRadius = 16
-        addNewHabit.backgroundColor = .ypBlackDay
+        addNewHabit.backgroundColor = .yBlack
         addNewHabit.addTarget(self, action: #selector(didTapCreateNewHabit), for: .touchUpInside)
         return addNewHabit
     }()
@@ -28,9 +28,9 @@ final class SelectTypeTrackerViewController: UIViewController {
         let irregularEvent = UIButton(type: .custom)
         irregularEvent.setTitle("events".localized(), for: .normal)
         irregularEvent.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        irregularEvent.setTitleColor(.ypWhiteDay, for: .normal)
+        irregularEvent.setTitleColor(.yWhite, for: .normal)
         irregularEvent.layer.cornerRadius = 16
-        irregularEvent.backgroundColor = .ypWhiteNight
+        irregularEvent.backgroundColor = .yBlack
         irregularEvent.addTarget(self, action: #selector(didTapCreateNewIrregularEvent), for: .touchUpInside)
         return irregularEvent
     }()
@@ -65,7 +65,7 @@ final class SelectTypeTrackerViewController: UIViewController {
     
     // MARK: - private Methods
     private func setupView() {
-        view.backgroundColor = .ypBlackNight
+        view.backgroundColor = .yWhite
         
         navigationItem.title = "create_tracker".localized()
         

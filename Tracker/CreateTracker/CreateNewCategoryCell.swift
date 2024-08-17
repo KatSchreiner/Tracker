@@ -32,7 +32,7 @@ final class CreateNewCategoryCell: UICollectionViewCell {
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .singleLine
-        tableView.separatorColor = .ypGray
+        tableView.separatorColor = .yGray
         tableView.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.cornerRadius = 16
         tableView.frame = .zero
@@ -85,9 +85,9 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellNewTracker")
         
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = .ypLightGray
+        cell.backgroundColor = .yBackground
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.detailTextLabel?.textColor = .ypGray
+        cell.detailTextLabel?.textColor = .yGray
         
         guard let typeTracker = typeTracker else { return UITableViewCell() }
         
@@ -144,6 +144,15 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+        if indexPath.row == numberOfRows - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
     }
 }
 

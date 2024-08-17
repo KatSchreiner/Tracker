@@ -11,7 +11,7 @@ import UIKit
 final class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        addTopBorderTabBar(color: .ypLightGray, heigth: 1.0)
+        addTopBorderTabBar(color: .yWhite, heigth: 1.0)
         configureTabs()
     }
     

@@ -30,7 +30,7 @@ final class CategoryCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(label)
         
-        backgroundColor = .ypLightGray
+        backgroundColor = .yBackground
         
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),

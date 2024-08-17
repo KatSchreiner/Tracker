@@ -1,10 +1,3 @@
-//
-//  CategoriesViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 08.08.2024.
-//
-
 import UIKit
 
 protocol CategoryViewControllerDelegate: AnyObject {
@@ -26,6 +19,8 @@ final class CategoriesViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = false
+        tableView.separatorColor = .yGray
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.identifier)
         return tableView
     }()
@@ -33,8 +28,8 @@ final class CategoriesViewController: UIViewController {
     private lazy var addNewCategoryButton: UIButton = {
         let addNewCategoryButton = UIButton(type: .custom)
         addNewCategoryButton.setTitle("add_category".localized(), for: .normal)
-        addNewCategoryButton.setTitleColor(.ypWhiteDay, for: .normal)
-        addNewCategoryButton.backgroundColor = .ypWhiteNight
+        addNewCategoryButton.setTitleColor(.yWhite, for: .normal)
+        addNewCategoryButton.backgroundColor = .yBlack
         addNewCategoryButton.layer.cornerRadius = 16
         addNewCategoryButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         addNewCategoryButton.addTarget(self, action: #selector(didTapAddCategory), for: .touchUpInside)
@@ -45,7 +40,7 @@ final class CategoriesViewController: UIViewController {
         let label = UILabel()
         label.text = "no_categories".localized()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .ypWhiteNight
+        label.textColor = .yBlack
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -86,7 +81,7 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .yWhite
         navigationItem.hidesBackButton = true
         title = "category".localized()
         
@@ -127,6 +122,7 @@ final class CategoriesViewController: UIViewController {
             placeholderStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             placeholderStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             placeholderStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            placeholderStackView.widthAnchor.constraint(equalToConstant: 343),
             addNewCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: 20),
             addNewCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor,constant: -20),
             addNewCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -173,19 +169,13 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
         
-        if numberOfRows > 0 {
-            if indexPath.row == 0 {
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                cell.layer.masksToBounds = true
-            } else if indexPath.row == numberOfRows - 1 {
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                cell.layer.masksToBounds = true
-            } else {
-                cell.layer.cornerRadius = 0
-                cell.layer.masksToBounds = true
-            }
+        if indexPath.row == numberOfRows - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            cell.layer.masksToBounds = true
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
     }
 }

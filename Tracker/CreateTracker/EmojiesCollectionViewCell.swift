@@ -20,7 +20,7 @@ final class EmojiesCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             self.layer.cornerRadius = 8
-            self.backgroundColor = self.isSelected ? .ypLightGray : .clear
+            self.backgroundColor = self.isSelected ? .yLightGray : .clear
         }
     }
     

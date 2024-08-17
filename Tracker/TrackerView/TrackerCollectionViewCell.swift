@@ -17,7 +17,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var titleLabelCell: UILabel = {
         let titleLabelCell = UILabel()
         titleLabelCell.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        titleLabelCell.textColor = .ypWhiteDay
+        titleLabelCell.textColor = .white
         return titleLabelCell
     }()
     
@@ -30,7 +30,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var emojiCircle: UIView = {
         let emojiCircle = UIView()
         emojiCircle.layer.cornerRadius = 12
-        emojiCircle.backgroundColor = .ypBackgroundDay
+        emojiCircle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return emojiCircle
     }()
     
@@ -43,7 +43,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var addButtonCell: UIButton = {
         let addButtonCell = UIButton()
         addButtonCell.layer.cornerRadius = 17
-        addButtonCell.tintColor = .ypWhiteDay
+        addButtonCell.tintColor = .yWhite
         addButtonCell.addTarget(self, action: #selector(didTapCompletedTrackers), for: .touchUpInside)
         return addButtonCell
     }()
@@ -57,7 +57,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var pinIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "pin.square")
-        imageView.tintColor = .systemBlue
+        imageView.tintColor = .yWhite
         imageView.isHidden = true
         return imageView
     }()
