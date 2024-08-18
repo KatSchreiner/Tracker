@@ -26,9 +26,9 @@ final class CreateNewCategoryCell: UICollectionViewCell {
             delegate?.categorySelected(selectedCategory)
         }
     }
-        
+    
     var typeTracker: TypeTracker?
-        
+    
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .singleLine
@@ -88,6 +88,7 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
         cell.backgroundColor = .yBackground
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .yGray
+        cell.selectionStyle = .none
         
         guard let typeTracker = typeTracker else { return UITableViewCell() }
         
@@ -117,7 +118,7 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
             cell.detailTextLabel?.text = selectedCategory
         }
         return cell
-}
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -160,9 +161,9 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
 extension CreateNewCategoryCell: ScheduleViewControllerDelegate {
     func sendSelectedDays(selectedDays: [WeekDay]) {
         self.selectedWeekDays = selectedDays
-
+        
         weekDaysDelegate?.sendSelectedWeekDays(selectedDays)
-
+        
         if selectedDays.count == 7 {
             tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "every_day".localized()
         } else {
