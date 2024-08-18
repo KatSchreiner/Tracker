@@ -22,7 +22,7 @@ final class StatisticViewController: UIViewController {
         placeholderStackView.axis = .vertical
         placeholderStackView.alignment = .center
         placeholderStackView.spacing = 8
-        placeholderStackView.isHidden = true
+//        placeholderStackView.isHidden = true
         return placeholderStackView
     }()
     
@@ -30,6 +30,7 @@ final class StatisticViewController: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
+        tableView.isHidden = true
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(StatisticTableViewCell.self, forCellReuseIdentifier: "statisticsCell")
@@ -42,6 +43,7 @@ final class StatisticViewController: UIViewController {
         super.viewDidLoad()
         setupNavigation()
         setupView()
+        updatePlaceholderVisibility()
     }
 
     private func setupNavigation() {
@@ -56,9 +58,7 @@ final class StatisticViewController: UIViewController {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
-        
-//        updatePlaceholderVisibility()
-        
+                
         NSLayoutConstraint.activate([
             placeholderStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -71,15 +71,16 @@ final class StatisticViewController: UIViewController {
     }
     
     private func updatePlaceholderVisibility() {
-        if StatisticsData.allCases.isEmpty {
-            placeholderStackView.isHidden = true
+        if statisticsData.isEmpty {
+            placeholderStackView.isHidden = false
             tableView.isHidden = true
         } else {
-            placeholderStackView.isHidden = false
+            placeholderStackView.isHidden = true
             tableView.isHidden = false
         }
         tableView.reloadData()
     }
+
 }
 
 extension StatisticViewController: UITableViewDataSource {
