@@ -28,6 +28,8 @@ class TrackersViewController: UIViewController {
     private var isSearching: Bool = false
     private var isFiltering: Bool = false
     
+    private var analyticsService = AnalyticsService.shared
+    
     private lazy var addButton: UIBarButtonItem = {
         let image = UIImage(named: "plus")
         let addButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(didTapAddTracker))
@@ -115,7 +117,7 @@ class TrackersViewController: UIViewController {
         filterButton.addTarget(self, action: #selector(didTapFilterTrackers), for: .touchUpInside)
         return filterButton
     }()
-    
+        
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,6 +129,8 @@ class TrackersViewController: UIViewController {
         
         loadCoreData()
         loadSelectedFilter()
+        
+        analyticsService.report(event: "open", screen: "Main")
     }
     
     // MARK: - IBAction
@@ -135,6 +139,8 @@ class TrackersViewController: UIViewController {
         selectTypeTracker.delegate = self
         let navigationController = UINavigationController(rootViewController: selectTypeTracker)
         present(navigationController,animated: true)
+        
+        analyticsService.report(event: "click", screen: "Main", item: "add_track")
     }
     
     @objc func datePickerValueChanged(_ sender: UIDatePicker) {
@@ -154,6 +160,8 @@ class TrackersViewController: UIViewController {
         filterTrackers.delegate = self
         let navigationFilterTrackers = UINavigationController(rootViewController: filterTrackers)
         present(navigationFilterTrackers, animated: true)
+        
+        analyticsService.report(event: "click", screen: "Main", item: "filter")
     }
     
     // MARK: - Private Methods
@@ -340,6 +348,8 @@ extension TrackersViewController: TrackerCompletionDelegate {
             print("Трекер удален из completedTrackers: \(completedTrackers)")
         }
         collectionView.reloadData()
+        
+        analyticsService.report(event: "click", screen: "Main", item: "track")
     }
     
     private func isTrackerComplete(trackerId: UUID) -> Bool {
@@ -510,6 +520,8 @@ extension TrackersViewController: UICollectionViewDelegate {
         
         let navigationController = UINavigationController(rootViewController: createNewTrackerVC)
         present(navigationController, animated: true, completion: nil)
+        
+        analyticsService.report(event: "click", screen: "Main", item: "edit")
     }
     
     private func deleteTracker(indexPath: IndexPath) {
@@ -522,6 +534,8 @@ extension TrackersViewController: UICollectionViewDelegate {
         
         loadCoreData()
         updateCollection()
+        
+        analyticsService.report(event: "click", screen: "Main", item: "delete")
     }
     
     private func showDeleteConfirmationAlert(indexPath: IndexPath) {
