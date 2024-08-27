@@ -17,8 +17,11 @@ class ScheduleViewController: UIViewController {
         tableView.dataSource = self
         tableView.allowsSelection = false
         tableView.isScrollEnabled = false
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.separatorColor = .yGray
         tableView.frame = .zero
+        tableView.tableFooterView = UIView()
+        tableView.tableHeaderView = UIView()
         tableView.register(ScheduleTableCell.self, forCellReuseIdentifier: ScheduleTableCell.cell)
         return tableView
     }()
@@ -113,12 +116,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
-        if indexPath.row == numberOfRows - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
-        } else if indexPath.row == numberOfRows - 7 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
-        } else if indexPath.row == numberOfRows - 6 {
-            cell.separatorInset = UIEdgeInsets(top: 1, left: 16, bottom: 0, right: 16)
-        }
+        
+        cell.setSeparatorInset(forRowAt: indexPath, totalRows: numberOfRows)
     }
 }

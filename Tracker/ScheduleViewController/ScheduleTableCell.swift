@@ -1,10 +1,3 @@
-//
-//  ScheduleTableCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 28.06.2024.
-//
-
 import UIKit
 
 class ScheduleTableCell: UITableViewCell {

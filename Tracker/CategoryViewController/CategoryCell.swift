@@ -1,10 +1,3 @@
-//
-//  CategoryCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 08.08.2024.
-//
-
 import UIKit
 
 final class CategoryCell: UITableViewCell {

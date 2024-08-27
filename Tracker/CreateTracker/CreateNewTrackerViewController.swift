@@ -14,16 +14,19 @@ class CreateNewTrackerViewController: UIViewController {
     
     var isEdit = false
     
+    var collectionViewTopConstraintDefault: NSLayoutConstraint!
+    private var collectionViewTopConstraintForEdit: NSLayoutConstraint?
+    
     // MARK: - Private Properties
-    private var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
+    var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                            "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                            "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
     
-    private let colors = [UIColor.ypColor1, .ypColor2, .ypColor3, .ypColor4, .ypColor5, .ypColor6,
+    let colors = [UIColor.ypColor1, .ypColor2, .ypColor3, .ypColor4, .ypColor5, .ypColor6,
                           .ypColor7, .ypColor8, .ypColor9, .ypColor10, .ypColor11, .ypColor12,
                           .ypColor13, .ypColor14, .ypColor15, .ypColor16, .ypColor17, .ypColor18]
     
-    private lazy var collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.register(CategoryNameFieldCell.self, forCellWithReuseIdentifier: CategoryNameFieldCell.nameFieldIdentifier)
         collectionView.register(CreateNewCategoryCell.self, forCellWithReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier)
@@ -40,7 +43,7 @@ class CreateNewTrackerViewController: UIViewController {
         let createButton = UIButton(type: .custom)
         createButton.layer.cornerRadius = 16
         createButton.backgroundColor = .yGray
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle("create".localized(), for: .normal)
         createButton.setTitleColor(.white, for: .normal)
         createButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
@@ -51,7 +54,7 @@ class CreateNewTrackerViewController: UIViewController {
         let cancelButton = UIButton(type: .custom)
         cancelButton.layer.cornerRadius = 16
         cancelButton.backgroundColor = .yWhite
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle("cancel".localized(), for: .normal)
         cancelButton.setTitleColor(.yRed, for: .normal)
         cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         cancelButton.layer.borderWidth = 1
@@ -60,7 +63,7 @@ class CreateNewTrackerViewController: UIViewController {
         return cancelButton
     }()
     
-    private lazy var stackView: UIStackView = {
+    lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
         stackView.axis = .horizontal
         stackView.spacing = 8
@@ -128,23 +131,24 @@ class CreateNewTrackerViewController: UIViewController {
         addConstraintView()
         
         self.delegate = self as? ConfigureTypeTrackerDelegate
-
     }
     
     private func addConstraintView() {
+        collectionViewTopConstraintDefault = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+        
         NSLayoutConstraint.activate([
             stackView.heightAnchor.constraint(equalToConstant: 60),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionViewTopConstraintDefault,
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -16)
         ])
     }
     
-    private func changeColorButtonIfTrackerSuccess() {
+    func changeColorButtonIfTrackerSuccess() {
         if let name = trackerName, let emoji = selectedEmoji, let color = selectedColor {
             createButton.backgroundColor = .yBlack
             createButton.titleLabel?.textColor = .yWhite
@@ -185,25 +189,39 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
         case .categoryNameField:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryNameFieldCell.nameFieldIdentifier, for: indexPath) as! CategoryNameFieldCell
             cell.newNameTrackerDelegate = self
+            cell.textFieldNameTracker.text = trackerName
+            
             return cell
+            
         case .createNewCategory:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as! CreateNewCategoryCell
             
             cell.weekDaysDelegate = self
             cell.delegate = self
             delegate?.selectTypeTracker(cell: cell)
-            
+    
             cell.navigationController = self.navigationController
+            
+            cell.selectedCategory = selectedCategory
+            cell.selectedWeekDays = trackerSelectedWeekDays
+            
             return cell
+            
         case .emoji:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as! EmojiesCollectionViewCell
             cell.prepareForReuse()
             cell.configure(emoji: emojies[indexPath.row])
+                        
             return cell
+            
         case .color:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as! ColorsCollectionViewCell
             cell.prepareForReuse()
             cell.configure(color: colors[indexPath.row])
+            
+            if selectedColor == colors[indexPath.row] {
+                collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+            }
             
             return cell
         }
@@ -220,14 +238,17 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
             case .categoryNameField:
                 headerView.titleLabelCell.text = ""
                 return headerView
+                
             case .createNewCategory:
                 headerView.titleLabelCell.text = ""
                 return headerView
+                
             case .emoji:
                 headerView.titleLabelCell.text = "Emoji"
                 return headerView
+                
             case .color:
-                headerView.titleLabelCell.text = "Цвет"
+                headerView.titleLabelCell.text = "color".localized()
                 return headerView
             }
         }
@@ -283,10 +304,13 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
         switch section {
         case .categoryNameField:
             return CGSize(width: collectionView.bounds.width - 32, height: 75)
+            
         case .createNewCategory:
             return delegate?.calculateTableHeight(width: collectionView.bounds.width - 32) ?? CGSize(width: collectionView.bounds.width - 32, height: 150)
+            
         case .emoji:
             return CGSize(width: 52, height: 52)
+            
         case .color:
             return CGSize(width: 52, height: 52)
         }
@@ -299,8 +323,10 @@ extension CreateNewTrackerViewController: UICollectionViewDelegateFlowLayout {
         switch section {
         case .categoryNameField:
             return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            
         case .createNewCategory:
             return UIEdgeInsets(top: 10, left: 0, bottom: 30, right: 0)
+            
         case .emoji:
             return UIEdgeInsets(top: 20, left: 16, bottom: 25, right: 16)
             

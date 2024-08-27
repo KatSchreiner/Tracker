@@ -10,13 +10,13 @@ enum TrackerFilter: Int, CaseIterable {
         switch self {
         
         case .allTrackers:
-            return "Все трекеры"
+            return "all".localized()
         case .trackersToday:
-            return "Трекеры на сегодня"
+            return "for_today".localized()
         case .completed:
-            return "Завершенные"
+            return "completed".localized()
         case .uncompleted:
-            return "Не завершенные"
+            return "not_completed".localized()
         }
     }
 }

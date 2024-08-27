@@ -1,34 +1,39 @@
-/* 
-  Localizable.strings
-  Tracker
-
-  Created by Екатерина Шрайнер on 10.08.2024.
-  
-*/
+"pagFirst" = "Track only what you want";
+"pageTwo" = "Even if it's not liters of water and yoga";
 
 "trackers" = "Trackers";
 "statistics" = "Statistics";
 "search" = "Search";
-"what_track" = "What are we going to track?";
-"nothing_found" = "Nothing was found";
-"pagFirst" = "Track only what you want";
-"pageTwo" = "Even if it's not liters of water and yoga";
-"technologies" = "These are the technologies!";
+"filters" = "filters";
+
+"all" = "All trackers";
+"for_today" = "Trackers for today";
+"completed" = "Completed";
+"not_completed" = "Not completed";
+
+"Unpin" = "Unpin";
+"Pin" = "Pin";
+"Edit" = "Edit";
+"Delete" = "Delete";
+"save" = "Save";
+
+"create_tracker" = "Creating a tracker";
+"del_tracker" = "Are you sure you want to delete the tracker?";
+"edit_habit" = "Editing a Habit";
 "habit" = "Habit";
 "events" = "Irregular events";
-"create_tracker" = "Creating a tracker";
-"create" = "To create";
-"cancel" = "Cancel";
-"color" = "Color";
 "new_habit" = "A new habit";
 "new_event" = "A new irregular event";
 "name_tracker" = "Enter the name of the tracker";
+"color" = "Color";
 "category" = "Category";
 "schedule" = "Schedule";
-"done" = "Done";
 "add_category" = "Add a category";
-"no_categories" = "Habits and events can be combined in meaning";
 "category_name" = "Enter the category name";
+"done" = "Done";
+"create" = "To create";
+"cancel" = "Cancel";
+
 "weekday_monday" = "Monday";
 "weekday_tuesday" = "Tuesday";
 "weekday_wednesday" = "Wednesday";
@@ -44,3 +49,14 @@
 "fri" = "Fri";
 "sat" = "Sat";
 "sun" = "Sun";
+
+"what_track" = "What are we going to track?";
+"nothing_found" = "Nothing was found";
+"technologies" = "These are the technologies!";
+"no_categories" = "Habits and events can be combined in meaning";
+"nothing_analyze" = "there is nothing to analyze";
+
+"best" = "Best period";
+"perfect" = "Perfect days";
+"completed" = "Trackers completed";
+"average" = "Average";

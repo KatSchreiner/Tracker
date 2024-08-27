@@ -9,7 +9,7 @@ final class TrackerTests: XCTestCase {
         assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .light)))
     }
     
-    func testTrackerViewControllerLight() {
+    func testTrackerViewControllerDark() {
         let view = TrackersViewController()
         assertSnapshot(of: view, as: .image(traits: .init(userInterfaceStyle: .dark)))
     }

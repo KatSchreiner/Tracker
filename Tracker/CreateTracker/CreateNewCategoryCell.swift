@@ -1,10 +1,3 @@
-//
-//  CreateNewCategoryCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 04.07.2024.
-//
-
 import UIKit
 
 protocol CreateNewCategoryCellDelegate: AnyObject {
@@ -20,7 +13,12 @@ final class CreateNewCategoryCell: UICollectionViewCell {
     weak var weekDaysDelegate: SelectedWeekDaysDelegate?
     weak var navigationController: UINavigationController?
     
-    var selectedWeekDays = [WeekDay]()
+    var selectedWeekDays = [WeekDay]() {
+        didSet {
+            weekDaysDelegate?.sendSelectedWeekDays(selectedWeekDays)
+        }
+    }
+    
     var selectedCategory = "" {
         didSet {
             delegate?.categorySelected(selectedCategory)
@@ -106,7 +104,7 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
                 } else {
                     cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                     
-                    let selectedDaysText = selectedWeekDays.map { $0.rawValue }.joined(separator: ", ")
+                    let selectedDaysText = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
                     cell.detailTextLabel?.text = selectedDaysText
                 }
             default:
@@ -149,11 +147,8 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
-        if indexPath.row == numberOfRows - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+
+        cell.setSeparatorInset(forRowAt: indexPath, totalRows: numberOfRows)
     }
 }
 

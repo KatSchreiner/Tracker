@@ -1,10 +1,3 @@
-//
-//  SelectTypeTrackerViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 25.06.2024.
-//
-
 import UIKit
 
 final class SelectTypeTrackerViewController: UIViewController {

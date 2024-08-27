@@ -22,13 +22,13 @@ enum StatisticsData: Int, CaseIterable {
     var subTitle: String {
         switch self {
         case .bestPeriod:
-            return "Лучший период"
+            return "best".localized()
         case .perfectDay:
-            return "Идеальные дни"
+            return "perfect".localized()
         case .trackersCompleted:
-            return "Трекеров завершено"
+            return "completed".localized()
         case .averageValue:
-            return "Среднее значение"
+            return "average".localized()
         }
     }
 }

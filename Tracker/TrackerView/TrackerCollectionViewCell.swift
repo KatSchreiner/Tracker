@@ -160,8 +160,6 @@ class TrackerCollectionViewCell: UICollectionViewCell {
             bodyView.topAnchor.constraint(equalTo: topAnchor),
             pinIcon.topAnchor.constraint(equalTo: bodyView.topAnchor, constant: 12),
             pinIcon.trailingAnchor.constraint(equalTo: bodyView.trailingAnchor, constant: -12)
-//            pinIcon.widthAnchor.constraint(equalToConstant: 16),
-//            pinIcon.heightAnchor.constraint(equalToConstant: 16)
         ])
     }
 }

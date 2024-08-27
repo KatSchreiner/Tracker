@@ -16,11 +16,11 @@ final class CategoriesViewController: UIViewController {
         tableView.rowHeight = 75
         tableView.layer.cornerRadius = 16
         tableView.backgroundColor = .clear
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.isScrollEnabled = false
         tableView.separatorColor = .yGray
+        tableView.tableHeaderView = UIView()
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.identifier)
         return tableView
     }()
@@ -101,7 +101,6 @@ final class CategoriesViewController: UIViewController {
         viewModel.onPlaceholderStateChanged = { [weak self] showPlaceholder in
             self?.tableView.isHidden = showPlaceholder
             self?.placeholderStackView.isHidden = !showPlaceholder
-            
         }
     }
     
@@ -116,7 +115,7 @@ final class CategoriesViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            tableView.bottomAnchor.constraint(equalTo: addNewCategoryButton.topAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: addNewCategoryButton.topAnchor, constant: 16),
             placeholderImage.heightAnchor.constraint(equalToConstant: 80),
             placeholderImage.widthAnchor.constraint(equalToConstant: 80),
             placeholderStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -130,8 +129,6 @@ final class CategoriesViewController: UIViewController {
             addNewCategoryButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
-    
-
 }
 
 //MARK: - UITableViewDataSource
@@ -171,13 +168,25 @@ extension CategoriesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
         
-        if indexPath.row == numberOfRows - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        cell.layer.cornerRadius = 0
+        cell.layer.maskedCorners = []
+        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        
+        if numberOfRows == 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
             cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            cell.layer.masksToBounds = true
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else if numberOfRows > 1 {
+            if indexPath.row == 0 {
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            } else if indexPath.row == numberOfRows - 1 {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
+                cell.layer.cornerRadius = 16
+                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+            } else {
+                
+            }
         }
     }
 }

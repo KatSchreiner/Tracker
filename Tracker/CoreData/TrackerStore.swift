@@ -47,11 +47,17 @@ final class TrackerStore: NSObject {
     
     // MARK: - Public Methods
     func saveTrackerToCoreData(tracker: Tracker, category: String) throws {
-        let categoryData = try fetchCategoryByTitle(title: category)
-        let trackerCoreData = createTrackerCoreData(from: tracker, category: categoryData)
-        
-        try context.save()
+        do {
+            let categoryData = try fetchCategoryByTitle(title: category)
+            let trackerCoreData = createTrackerCoreData(from: tracker, category: categoryData)
+            
+            try context.save()
+            print("Tracker saved: \(tracker)")
+        } catch {
+            print("Ошибка сохранения: \(error)")
+        }
     }
+        
     
     func deleteTrackerFromCoreData(id: UUID) throws {
         let trackerCoreData = try fetchTrackerById(id: id)
@@ -66,7 +72,7 @@ final class TrackerStore: NSObject {
         }
     }
     
-    func updateTracker(_ tracker: Tracker, category: String) throws {
+    func updateTracker(_ tracker: Tracker, _ category: String) throws {
         let existingTracker = try fetchTrackerById(id: tracker.id)
         
         existingTracker.name = tracker.name
@@ -134,7 +140,7 @@ final class TrackerStore: NSObject {
         trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = weekDayTransformer.transformedValue(tracker.schedule) as? NSObject
-        trackerCoreData.category = category // Связать с категорией
+        trackerCoreData.category = category 
         
         return trackerCoreData
     }

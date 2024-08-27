@@ -1,11 +1,12 @@
 import UIKit
 
-protocol FilterTrackersDelegate:  AnyObject {
-    func didSelectFilter(_ filter: TrackerFilter)
-}
-
 final class FilterTrackersViewController: UIViewController {
     
+    // MARK: - Public Properties
+    var selectedFilter: TrackerFilter?
+    weak var delegate: FilterTrackersDelegate?
+    
+    // MARK: - Private Properties
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "tableFilter")
@@ -14,19 +15,19 @@ final class FilterTrackersViewController: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.allowsMultipleSelection = false
+        tableView.tableHeaderView = UIView()
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
-    var selectedFilter: TrackerFilter?
-    weak var delegate: FilterTrackersDelegate?
-    
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
     
+    // MARK: - Private Methods
     private func setupView() {
         view.backgroundColor = .yWhite
         title = "Фильтры"
@@ -45,6 +46,7 @@ final class FilterTrackersViewController: UIViewController {
     }
 }
 
+// MARK: - UITableViewDataSource
 extension FilterTrackersViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return TrackerFilter.allCases.count
@@ -70,6 +72,7 @@ extension FilterTrackersViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension FilterTrackersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         75

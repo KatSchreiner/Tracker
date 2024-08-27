@@ -2,6 +2,7 @@ import UIKit
 
 final class StatisticViewController: UIViewController {
     
+    // MARK: - Private Properties
     private lazy var placeholderImage: UIImageView = {
         let placeholderImage = UIImageView()
         placeholderImage.image = UIImage(named: "no_statistics")
@@ -12,7 +13,7 @@ final class StatisticViewController: UIViewController {
     private lazy var placeHolderLabel: UILabel = {
         var placeHolderLabel = UILabel()
         placeHolderLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        placeHolderLabel.text = "Анализировать пока нечего"
+        placeHolderLabel.text = "nothing_analyze".localized()
         placeHolderLabel.translatesAutoresizingMaskIntoConstraints = false
         return placeHolderLabel
     }()
@@ -22,7 +23,6 @@ final class StatisticViewController: UIViewController {
         placeholderStackView.axis = .vertical
         placeholderStackView.alignment = .center
         placeholderStackView.spacing = 8
-//        placeholderStackView.isHidden = true
         return placeholderStackView
     }()
     
@@ -30,27 +30,27 @@ final class StatisticViewController: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
-        tableView.isHidden = true
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(StatisticTableViewCell.self, forCellReuseIdentifier: "statisticsCell")
         return tableView
     }()
     
-    private var statisticsData: [StatisticsData] = [.bestPeriod, .perfectDay, .trackersCompleted, .averageValue]
+    private var statisticsData: [StatisticsData] = []
     
+    // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigation()
         setupView()
-        updatePlaceholderVisibility()
     }
-
+    
+    // MARK: - Private Methods
     private func setupNavigation() {
         title = "statistics".localized()
         navigationController?.navigationBar.prefersLargeTitles = true
     }
-
+    
     private func setupView() {
         view.backgroundColor = .yWhite
         
@@ -58,7 +58,9 @@ final class StatisticViewController: UIViewController {
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
-                
+        
+        updatePlaceholderVisibility()
+        
         NSLayoutConstraint.activate([
             placeholderStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             placeholderStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -80,9 +82,9 @@ final class StatisticViewController: UIViewController {
         }
         tableView.reloadData()
     }
-
 }
 
+// MARK: - UITableViewDataSource
 extension StatisticViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return statisticsData.count
@@ -104,6 +106,7 @@ extension StatisticViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - UITableViewDelegate
 extension StatisticViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 90
