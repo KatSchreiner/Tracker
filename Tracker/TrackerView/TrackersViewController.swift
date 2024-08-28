@@ -522,7 +522,6 @@ extension TrackersViewController: UICollectionViewDelegate {
     private func editTracker(tracker: Tracker, completedDays: Int) {
         let createNewTrackerVC = EditTrackerViewController()
         createNewTrackerVC.createTrackerDelegate = self
-        createNewTrackerVC.isEdit = true
         
         if let category = currentCategories.first(where: { $0.trackers.contains(where: { $0.id == tracker.id }) })?.title {
             createNewTrackerVC.getDataForEdit(tracker: tracker, completedDays: completedDays, category: category)

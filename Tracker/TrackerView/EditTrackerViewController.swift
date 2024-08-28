@@ -13,6 +13,7 @@ final class EditTrackerViewController: CreateNewHabitViewController {
     private var id: UUID?
     private var collectionViewTopConstraint: NSLayoutConstraint!
     private var trackerStore: TrackerStore?
+    private var isEdit = false
     
     // MARK: - View Life Cycle
     override func viewDidLoad() {

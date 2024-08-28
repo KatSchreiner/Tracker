@@ -3,21 +3,6 @@ import UIKit
 class CreateNewTrackerViewController: UIViewController {
     
     // MARK: - Public Properties
-    weak var createTrackerDelegate: CreateTrackerDelegate?
-    weak var delegate: ConfigureTypeTrackerDelegate?
-    
-    var trackerSelectedWeekDays: [WeekDay] = []
-    var selectedCategory = ""
-    var trackerName: String?
-    var selectedEmoji: String?
-    var selectedColor: UIColor?
-    
-    var isEdit = false
-    
-    var collectionViewTopConstraintDefault: NSLayoutConstraint!
-    private var collectionViewTopConstraintForEdit: NSLayoutConstraint?
-    
-    // MARK: - Private Properties
     var emojies = ["🙂", "😻", "🌺", "🐶", "❤️", "😱",
                            "😇", "😡", "🥶", "🤔", "🙌", "🍔",
                            "🥦", "🏓", "🥇", "🎸", "🏝", "😪"]
@@ -50,6 +35,20 @@ class CreateNewTrackerViewController: UIViewController {
         return createButton
     }()
     
+    weak var createTrackerDelegate: CreateTrackerDelegate?
+    weak var delegate: ConfigureTypeTrackerDelegate?
+    
+    var trackerSelectedWeekDays: [WeekDay] = []
+    var selectedCategory = ""
+    var trackerName: String?
+    var selectedEmoji: String?
+    var selectedColor: UIColor?
+        
+    var collectionViewTopConstraintDefault: NSLayoutConstraint!
+    
+    // MARK: - Private Properties
+    private var collectionViewTopConstraintForEdit: NSLayoutConstraint?
+
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton(type: .custom)
         cancelButton.layer.cornerRadius = 16
@@ -63,7 +62,7 @@ class CreateNewTrackerViewController: UIViewController {
         return cancelButton
     }()
     
-    lazy var stackView: UIStackView = {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [cancelButton, createButton])
         stackView.axis = .horizontal
         stackView.spacing = 8
@@ -148,7 +147,7 @@ class CreateNewTrackerViewController: UIViewController {
         ])
     }
     
-    func changeColorButtonIfTrackerSuccess() {
+    private func changeColorButtonIfTrackerSuccess() {
         if let name = trackerName, let emoji = selectedEmoji, let color = selectedColor {
             createButton.backgroundColor = .yBlack
             createButton.titleLabel?.textColor = .yWhite
