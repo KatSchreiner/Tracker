@@ -37,7 +37,9 @@ final class TrackerStore: NSObject {
     
     // MARK: - Initializers
     convenience override init() {
-        self.init(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("Невозможно привести UIApplication.shared.delegate к AppDelegate") }
+                
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
     
     init(context: NSManagedObjectContext) {
@@ -114,7 +116,7 @@ final class TrackerStore: NSObject {
         }
         
         let colorConverted = UIColorMarshalling.color(from: color)
-        let schedule = weekDayTransformer.reverseTransformedValue(trackerCoreData.schedule) as! [WeekDay]
+        guard let schedule = weekDayTransformer.reverseTransformedValue(trackerCoreData.schedule) as? [WeekDay] else { throw TrackerStoreError.fetchTracker(description: "Трекер имеет неверный формат расписания")}
         
         return Tracker(
             id: id,

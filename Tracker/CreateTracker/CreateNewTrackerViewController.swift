@@ -186,14 +186,14 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
         
         switch section {
         case .categoryNameField:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryNameFieldCell.nameFieldIdentifier, for: indexPath) as! CategoryNameFieldCell
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryNameFieldCell.nameFieldIdentifier, for: indexPath) as? CategoryNameFieldCell else { return UICollectionViewCell() }
             cell.newNameTrackerDelegate = self
             cell.textFieldNameTracker.text = trackerName
             
             return cell
             
         case .createNewCategory:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as! CreateNewCategoryCell
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CreateNewCategoryCell.newCategoryIdentifier, for: indexPath) as? CreateNewCategoryCell else { return UICollectionViewCell() }
             
             cell.weekDaysDelegate = self
             cell.delegate = self
@@ -207,14 +207,14 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
             return cell
             
         case .emoji:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as! EmojiesCollectionViewCell
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "emojiCell", for: indexPath) as? EmojiesCollectionViewCell else { return UICollectionViewCell() }
             cell.prepareForReuse()
             cell.configure(emoji: emojies[indexPath.row])
                         
             return cell
             
         case .color:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as! ColorsCollectionViewCell
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "colorCell", for: indexPath) as? ColorsCollectionViewCell else { return UICollectionViewCell() }
             cell.prepareForReuse()
             cell.configure(color: colors[indexPath.row])
             
@@ -229,7 +229,7 @@ extension CreateNewTrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
         if kind == UICollectionView.elementKindSectionHeader {
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionViewCell.headerIdentifier, for: indexPath) as! HeaderCollectionViewCell
+            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderCollectionViewCell.headerIdentifier, for: indexPath) as? HeaderCollectionViewCell else { return UICollectionViewCell() }
             
             guard let section = SectionCollection(rawValue: indexPath.section) else { fatalError("Invalid section")}
             

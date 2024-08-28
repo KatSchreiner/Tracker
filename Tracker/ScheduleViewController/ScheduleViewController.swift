@@ -103,7 +103,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableCell.cell, for: indexPath) as! ScheduleTableCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableCell.cell, for: indexPath) as? ScheduleTableCell else { return UITableViewCell() }
         
         configureCell(cell: cell, indexPath: indexPath)
         

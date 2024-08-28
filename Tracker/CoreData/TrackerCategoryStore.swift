@@ -33,7 +33,9 @@ final class TrackerCategoryStore: NSObject {
     
     // MARK: - Initializers
     convenience override init() {
-        self.init(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("Невозможно привести UIApplication.shared.delegate к AppDelegate") }
+                
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
     
     init(context: NSManagedObjectContext) {
@@ -63,13 +65,22 @@ final class TrackerCategoryStore: NSObject {
     func deleteCategoryFromCoreData(title: String, tracker: Tracker) throws {
         let coreData = try fetchCategoryByTitle(title: title)
         
-        var existingTrackers = coreData.tracker?.allObjects as! [TrackerCoreData]
+        var existingTrackers: [TrackerCoreData] = []
+        
+        if let allObjects = coreData.tracker?.allObjects as? [TrackerCoreData] {
+                    existingTrackers = allObjects
+                } else {
+                    print("Не удалось получить трекеры для категории '\(title)'.")
+                    return
+                }
+        
         if let index = existingTrackers.firstIndex(where: { $0.id == tracker.id }) {
             existingTrackers.remove(at: index)
             print("Трекер с id: \(tracker.id) успешно удален из категории '\(title)'.")
         } else {
             print("Трекер с id: \(tracker.id) не найден в категории '\(title)'.")
         }
+        
         coreData.tracker = NSSet(array: existingTrackers)
         
         try context.save()

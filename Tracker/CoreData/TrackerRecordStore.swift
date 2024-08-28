@@ -38,7 +38,9 @@ final class TrackerRecordStore: NSObject {
     
     // MARK: - Initializers
     convenience override init() {
-        self.init(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("Невозможно привести UIApplication.shared.delegate к AppDelegate") }
+                
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
     
     init(context: NSManagedObjectContext) {
