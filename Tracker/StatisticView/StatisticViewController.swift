@@ -74,13 +74,8 @@ final class StatisticViewController: UIViewController {
     }
     
     private func updatePlaceholderVisibility() {
-        if statisticsData.isEmpty {
-            placeholderStackView.isHidden = false
-            tableView.isHidden = true
-        } else {
-            placeholderStackView.isHidden = true
-            tableView.isHidden = false
-        }
+        placeholderStackView.isHidden = !statisticsData.isEmpty
+        tableView.isHidden = statisticsData.isEmpty
         tableView.reloadData()
     }
 }
