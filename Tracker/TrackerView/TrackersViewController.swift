@@ -197,7 +197,8 @@ class TrackersViewController: UIViewController {
     }
     private func setupView() {
         view.backgroundColor = .yWhite
-        [datePicker, collectionView, placeholderForTrackers, labelIfNotFoundTrackers, placeholderForSearch, labelIfSearchNotFound, filterButton].forEach { view in
+        [datePicker, collectionView, placeholderForTrackers, labelIfNotFoundTrackers, placeholderForSearch, labelIfSearchNotFound, filterButton].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }

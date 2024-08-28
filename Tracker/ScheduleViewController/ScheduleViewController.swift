@@ -59,7 +59,8 @@ class ScheduleViewController: UIViewController {
     
     // MARK: Private Methods
     private func setupView() {
-        [tableView, doneButton].forEach { view in
+        [tableView, doneButton].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }

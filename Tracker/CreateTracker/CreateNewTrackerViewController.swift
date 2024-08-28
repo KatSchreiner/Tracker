@@ -115,7 +115,8 @@ class CreateNewTrackerViewController: UIViewController {
     func setupView() {
         view.backgroundColor = .yWhite
                 
-        [createButton, cancelButton, stackView, collectionView].forEach { view in
+        [createButton, cancelButton, stackView, collectionView].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
         }
         

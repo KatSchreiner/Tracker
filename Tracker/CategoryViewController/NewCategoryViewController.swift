@@ -69,7 +69,8 @@ final class NewCategoryViewController: UIViewController {
         navigationItem.hidesBackButton = true
         title = "category".localized()
         
-        [categoryTextField, doneButton].forEach { view in
+        [categoryTextField, doneButton].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }

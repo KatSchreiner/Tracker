@@ -62,7 +62,8 @@ final class SelectTypeTrackerViewController: UIViewController {
         
         navigationItem.title = "create_tracker".localized()
         
-        [stackView, addNewHabit, irregularEvent].forEach { view in
+        [stackView, addNewHabit, irregularEvent].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
         }
         

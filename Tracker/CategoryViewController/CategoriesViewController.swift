@@ -85,7 +85,8 @@ final class CategoriesViewController: UIViewController {
         navigationItem.hidesBackButton = true
         title = "category".localized()
         
-        [tableView, addNewCategoryButton, placeholderStackView].forEach { view in
+        [tableView, addNewCategoryButton, placeholderStackView].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }

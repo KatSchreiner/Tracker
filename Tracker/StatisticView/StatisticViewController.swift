@@ -54,7 +54,8 @@ final class StatisticViewController: UIViewController {
     private func setupView() {
         view.backgroundColor = .yWhite
         
-        [placeholderStackView, tableView].forEach { view in
+        [placeholderStackView, tableView].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
