@@ -166,27 +166,16 @@ extension CategoriesViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? CategoryCell else { return }
+        
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
         
-        cell.layer.cornerRadius = 0
-        cell.layer.maskedCorners = []
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        
         if numberOfRows == 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
-            cell.layer.cornerRadius = 16
-            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        } else if numberOfRows > 1 {
-            if indexPath.row == 0 {
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            } else if indexPath.row == numberOfRows - 1 {
-                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: tableView.bounds.width)
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            } else {
-                
-            }
+            cell.configCell(isSingleCell: true, isFirstCell: false, isLastCell: false)
+        } else {
+            let isFirstCell = indexPath.row == 0
+            let isLastCell = indexPath.row == numberOfRows - 1
+            cell.configCell(isSingleCell: false, isFirstCell: isFirstCell, isLastCell: isLastCell)
         }
     }
 }

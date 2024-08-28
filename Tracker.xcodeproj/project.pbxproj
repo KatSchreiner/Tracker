@@ -11,12 +11,8 @@
 		C1009AE02C72E323005BEC02 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1009ADF2C72E323005BEC02 /* AnalyticsService.swift */; };
 		C10A2A272C70ABC30037928E /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = C10A2A262C70ABC30037928E /* InlineSnapshotTesting */; };
 		C10A2A292C70ABC30037928E /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = C10A2A282C70ABC30037928E /* SnapshotTesting */; };
-		C10ACB552C27587900A39123 /* SF-Pro-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = C10ACB522C27587800A39123 /* SF-Pro-Regular.otf */; };
-		C10ACB562C27587900A39123 /* SF-Pro-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C10ACB532C27587900A39123 /* SF-Pro-Medium.otf */; };
-		C10ACB572C27587900A39123 /* SF-Pro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C10ACB542C27587900A39123 /* SF-Pro-Bold.otf */; };
 		C10B49552C5F4F600006072F /* CategoriesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10B49542C5F4F600006072F /* CategoriesViewModel.swift */; };
 		C10B5C332C2B35C80098C6DF /* ScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10B5C322C2B35C80098C6DF /* ScheduleViewController.swift */; };
-		C11E40872C275B7F001A5C99 /* SF-Pro.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C11E40862C275B7F001A5C99 /* SF-Pro.ttf */; };
 		C11E40892C276B2D001A5C99 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11E40882C276B2D001A5C99 /* UIColor+Extensions.swift */; };
 		C11E408C2C277C04001A5C99 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11E408B2C277C04001A5C99 /* Tracker.swift */; };
 		C11E40D62C2850E6001A5C99 /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11E40D52C2850E6001A5C99 /* TrackerCategory.swift */; };
@@ -92,12 +88,8 @@
 		9D0A10D9B34F5B377F5398D1 /* Pods_TrackerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TrackerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A960959A7D78C12129A2DE3E /* Pods-Tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker.release.xcconfig"; path = "Target Support Files/Pods-Tracker/Pods-Tracker.release.xcconfig"; sourceTree = "<group>"; };
 		C1009ADF2C72E323005BEC02 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
-		C10ACB522C27587800A39123 /* SF-Pro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Regular.otf"; sourceTree = "<group>"; };
-		C10ACB532C27587900A39123 /* SF-Pro-Medium.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Medium.otf"; sourceTree = "<group>"; };
-		C10ACB542C27587900A39123 /* SF-Pro-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro-Bold.otf"; sourceTree = "<group>"; };
 		C10B49542C5F4F600006072F /* CategoriesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesViewModel.swift; sourceTree = "<group>"; };
 		C10B5C322C2B35C80098C6DF /* ScheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleViewController.swift; sourceTree = "<group>"; };
-		C11E40862C275B7F001A5C99 /* SF-Pro.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-Pro.ttf"; sourceTree = "<group>"; };
 		C11E40882C276B2D001A5C99 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		C11E408B2C277C04001A5C99 /* Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker.swift; sourceTree = "<group>"; };
 		C11E40D52C2850E6001A5C99 /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
@@ -359,7 +351,6 @@
 				C1B1B1FC2C478696001269C4 /* CategoryViewController */,
 				C1DF48DC2C24434E00D82BE7 /* TabBar */,
 				C10ACB4F2C274E2900A39123 /* Extensions */,
-				C1DF48E12C24B47B00D82BE7 /* Fonts */,
 				C19A730F2C4B4DA5003296F2 /* CoreData */,
 				C16D58FB2C66A3D800831A40 /* Resources */,
 				C1DF48D32C243B9B00D82BE7 /* LaunchScreen.storyboard */,
@@ -375,17 +366,6 @@
 				C1DF48DD2C24436500D82BE7 /* MainTabBarController.swift */,
 			);
 			path = TabBar;
-			sourceTree = "<group>";
-		};
-		C1DF48E12C24B47B00D82BE7 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				C11E40862C275B7F001A5C99 /* SF-Pro.ttf */,
-				C10ACB542C27587900A39123 /* SF-Pro-Bold.otf */,
-				C10ACB532C27587900A39123 /* SF-Pro-Medium.otf */,
-				C10ACB522C27587800A39123 /* SF-Pro-Regular.otf */,
-			);
-			path = Fonts;
 			sourceTree = "<group>";
 		};
 		C1F84D882C5D61B50075C80D /* Onboarding */ = {
@@ -496,12 +476,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1DF48D22C243B9B00D82BE7 /* Assets.xcassets in Resources */,
-				C11E40872C275B7F001A5C99 /* SF-Pro.ttf in Resources */,
-				C10ACB562C27587900A39123 /* SF-Pro-Medium.otf in Resources */,
 				C16D58FE2C66A41A00831A40 /* Localizable.strings in Resources */,
-				C10ACB552C27587900A39123 /* SF-Pro-Regular.otf in Resources */,
 				C1933AAA2C68C73A00985C1E /* Localizable.stringsdict in Resources */,
-				C10ACB572C27587900A39123 /* SF-Pro-Bold.otf in Resources */,
 				C1DF48D52C243B9B00D82BE7 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
