@@ -134,6 +134,8 @@ class TrackersViewController: UIViewController {
         loadCoreData()
         loadSelectedFilter()
         
+        updatePlaceholdersVisibility()
+        
         analyticsService.report(event: "open", screen: "Main")
     }
     
@@ -156,6 +158,9 @@ class TrackersViewController: UIViewController {
             currentCategories = showTrackersInCurrentDate()
             updateCollection()
         }
+        
+        updateFilterButtonVisibility()
+        updatePlaceholdersVisibility()
     }
     
     @objc func didTapFilterTrackers() {
@@ -183,6 +188,8 @@ class TrackersViewController: UIViewController {
         } else {
             updateCollection()
         }
+        
+        updatePlaceholdersVisibility()
     }
     
     private func setupNavigation() {
@@ -205,7 +212,6 @@ class TrackersViewController: UIViewController {
         
         addConstraint()
         
-        updateTrackersPlaceholderVisibility()
     }
     
     private func addConstraint() {
@@ -286,7 +292,7 @@ class TrackersViewController: UIViewController {
         currentCategories = showTrackersInCurrentDate()
         collectionView.reloadData()
         updateFilterButtonVisibility()
-        updateTrackersPlaceholderVisibility()
+        updatePlaceholdersVisibility()
     }
     
     private func updatePlaceholderVisibility(setHidden: Bool) {
@@ -298,30 +304,24 @@ class TrackersViewController: UIViewController {
         placeholderForSearch.isHidden = setHidden
         labelIfSearchNotFound.isHidden = setHidden
     }
-    
-    private func updateTrackersPlaceholderVisibility() {
-        if categories.isEmpty {
+
+    private func updatePlaceholdersVisibility() {
+        let hasTrackers = !categories.isEmpty
+        let hasCurrentTrackers = !currentCategories.isEmpty
+
+        if !hasTrackers {
             updatePlaceholderVisibility(setHidden: false)
             updatePlaceholderVisibilityForSearch(setHidden: true)
-        } else {
+        } else if isSearching && searchController.searchBar.text?.isEmpty == false {
+            let hasSearchResults = !currentCategories.flatMap { $0.trackers }.isEmpty
             updatePlaceholderVisibility(setHidden: true)
-        }
-    }
-    
-    private func updateSearchPlaceholderVisibility() {
-        if isSearching && currentCategories.isEmpty {
+            updatePlaceholderVisibilityForSearch(setHidden: hasSearchResults)
+        } else if isFiltering {
+            let hasFilteredResults = !currentCategories.flatMap { $0.trackers }.isEmpty
             updatePlaceholderVisibility(setHidden: true)
-            updatePlaceholderVisibilityForSearch(setHidden: false)
+            updatePlaceholderVisibilityForSearch(setHidden: hasFilteredResults)
         } else {
-            updatePlaceholderVisibilityForSearch(setHidden: true)
-        }
-    }
-    
-    private func updateFilterPlaceholderVisibility() {
-        if isFiltering && currentCategories.isEmpty {
-            updatePlaceholderVisibility(setHidden: true)
-            updatePlaceholderVisibilityForSearch(setHidden: false)
-        } else {
+            updatePlaceholderVisibility(setHidden: hasCurrentTrackers)
             updatePlaceholderVisibilityForSearch(setHidden: true)
         }
     }
@@ -373,24 +373,11 @@ extension TrackersViewController: TrackerCompletionDelegate {
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        if currentCategories.isEmpty {
-            updatePlaceholderVisibility(setHidden: false)
-            updateTrackersPlaceholderVisibility()
-            return 0
-        } else {
             return currentCategories.count
-        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let trackers = currentCategories[section].trackers
-        if trackers.isEmpty {
-            updatePlaceholderVisibility(setHidden: false)
-            return 0
-        } else {
-            updatePlaceholderVisibility(setHidden: true)
-            return trackers.count
-        }
+        return currentCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -641,8 +628,7 @@ extension TrackersViewController: UISearchBarDelegate {
             currentCategories = showTrackersInCurrentDate()
         }
         
-        updateSearchPlaceholderVisibility()
-        
+        updatePlaceholdersVisibility()
         collectionView.reloadData()
     }
     
@@ -654,6 +640,7 @@ extension TrackersViewController: UISearchBarDelegate {
         searchBar.text = ""
         currentCategories = showTrackersInCurrentDate()
         collectionView.reloadData()
+        updatePlaceholdersVisibility()
     }
 }
 
@@ -689,8 +676,7 @@ extension TrackersViewController: FilterTrackersDelegate {
             log("Показ невыполненных трекеров.")
         }
         
-        updateFilterPlaceholderVisibility()
-        
+        updatePlaceholdersVisibility()
         collectionView.reloadData()
         
         isFiltering = false
