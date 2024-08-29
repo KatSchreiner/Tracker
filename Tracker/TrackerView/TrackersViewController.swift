@@ -135,6 +135,7 @@ class TrackersViewController: UIViewController {
         loadSelectedFilter()
         
         updatePlaceholdersVisibility()
+        updateFilterButtonVisibility()
         
         analyticsService.report(event: "open", screen: "Main")
     }
@@ -160,6 +161,7 @@ class TrackersViewController: UIViewController {
         }
         
         updatePlaceholdersVisibility()
+        updateFilterButtonVisibility()
     }
     
     @objc func didTapFilterTrackers() {
@@ -240,7 +242,8 @@ class TrackersViewController: UIViewController {
     }
     
     private func updateFilterButtonVisibility() {
-        filterButton.isHidden = currentCategories.isEmpty
+        let trackersForToday = showTrackersInCurrentDate().flatMap { $0.trackers }
+        filterButton.isHidden = trackersForToday.isEmpty
     }
     
     private func updateColorTextFilterButton() {
@@ -285,6 +288,7 @@ class TrackersViewController: UIViewController {
             let trackers = category.trackers.filter { $0.schedule.contains(stringWeekday) }
             return trackers.count > 0 ? TrackerCategory(title: category.title, trackers: trackers) : nil
         }
+        
     }
     
     private func updateCollection() {
@@ -612,7 +616,7 @@ extension TrackersViewController: CreateTrackerDelegate {
         categories = updatedCategories
         
         updateCollection()
-        updatePlaceholderVisibility(setHidden: !categories.isEmpty)
+        updatePlaceholdersVisibility()
     }
 }
 
