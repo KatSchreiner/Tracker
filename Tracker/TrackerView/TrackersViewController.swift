@@ -159,7 +159,6 @@ class TrackersViewController: UIViewController {
             updateCollection()
         }
         
-        updateFilterButtonVisibility()
         updatePlaceholdersVisibility()
     }
     
@@ -341,6 +340,7 @@ extension TrackersViewController: TrackerCompletionDelegate {
             try? trackerRecordStore.addRecordToCompletedTrackers(trackerId: trackerId, date: currentDate)
             print("Трекер добавлен в completedTrackers: \(completedTrackers)")
             
+            NotificationCenter.default.post(name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
         } else {
             completedTrackers = completedTrackers.filter {
                 if $0.trackerId == trackerId && Calendar.current.isDate(
@@ -356,6 +356,8 @@ extension TrackersViewController: TrackerCompletionDelegate {
             try? trackerRecordStore.removeRecordFromCompletedTrackers(trackerId: trackerId, date: currentDate)
             
             print("Трекер удален из completedTrackers: \(completedTrackers)")
+            
+            NotificationCenter.default.post(name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
         }
         collectionView.reloadData()
         

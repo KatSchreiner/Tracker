@@ -11,6 +11,7 @@ class StatisticTableViewCell: UITableViewCell {
     
     let customDetailTextLabel: UILabel = {
         let label = UILabel()
+        label.text = "completed".localized()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false

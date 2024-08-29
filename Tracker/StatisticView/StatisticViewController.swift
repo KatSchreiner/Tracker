@@ -3,6 +3,9 @@ import UIKit
 final class StatisticViewController: UIViewController {
     
     // MARK: - Private Properties
+    private let trackerRecordStore = TrackerRecordStore()
+    private var completedTrackers: [TrackerRecord] = []
+    
     private lazy var placeholderImage: UIImageView = {
         let placeholderImage = UIImageView()
         placeholderImage.image = UIImage(named: "no_statistics")
@@ -36,13 +39,25 @@ final class StatisticViewController: UIViewController {
         return tableView
     }()
     
-    private var statisticsData: [StatisticsData] = []
-    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigation()
         setupView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateStatistics), name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
+        
+        updateStatistics()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
+    }
+    
+    @objc private func updateStatistics() {
+        completedTrackers = trackerRecordStore.fetchAllTrackersRecord()
+        tableView.reloadData()
+        updatePlaceholderVisibility()
     }
     
     // MARK: - Private Methods
@@ -69,31 +84,27 @@ final class StatisticViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-            tableView.heightAnchor.constraint(equalToConstant: view.frame.height - 400)
+            tableView.heightAnchor.constraint(equalToConstant: 90)
         ])
     }
     
     private func updatePlaceholderVisibility() {
-        placeholderStackView.isHidden = !statisticsData.isEmpty
-        tableView.isHidden = statisticsData.isEmpty
-        tableView.reloadData()
+        let hasCompletedTrackers = !completedTrackers.isEmpty
+        placeholderStackView.isHidden = hasCompletedTrackers
+        tableView.isHidden = !hasCompletedTrackers
     }
 }
 
 // MARK: - UITableViewDataSource
 extension StatisticViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return statisticsData.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "statisticsCell", for: indexPath) as? StatisticTableViewCell else { return UITableViewCell() }
         
-        let data = statisticsData[indexPath.row]
-        
-        cell.customTextLabel.text = String(data.countStatistics)
-        cell.customTextLabel.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        cell.customDetailTextLabel.text = data.subTitle
+        cell.customTextLabel.text = "\(completedTrackers.count)"
         
         cell.backgroundColor = .clear
         cell.selectionStyle = .none

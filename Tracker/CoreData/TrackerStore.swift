@@ -59,10 +59,26 @@ final class TrackerStore: NSObject {
             print("Ошибка сохранения: \(error)")
         }
     }
-        
     
     func deleteTrackerFromCoreData(id: UUID) throws {
         let trackerCoreData = try fetchTrackerById(id: id)
+        let trackerRecordStore = TrackerRecordStore(context: context)
+        
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerId == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for record in results {
+                context.delete(record)
+            }
+            try context.save()
+            print("Трекер с id: \(id) и все связанные записи успешно удалены из Core Data.")
+            NotificationCenter.default.post(name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
+        } catch {
+            context.rollback()
+            throw TrackerStoreError.fetchTrackerByIdError(description: "Ошибка при удалении записи трекера: \(error.localizedDescription)")
+        }
         
         context.delete(trackerCoreData)
         do {
