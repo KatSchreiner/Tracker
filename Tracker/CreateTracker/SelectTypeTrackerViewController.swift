@@ -1,10 +1,3 @@
-//
-//  SelectTypeTrackerViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 25.06.2024.
-//
-
 import UIKit
 
 final class SelectTypeTrackerViewController: UIViewController {
@@ -15,22 +8,22 @@ final class SelectTypeTrackerViewController: UIViewController {
     // MARK: - Private Properties
     private lazy var addNewHabit: UIButton = {
         let addNewHabit = UIButton(type: .custom)
-        addNewHabit.setTitle("Привычка", for: .normal)
+        addNewHabit.setTitle("habit".localized(), for: .normal)
         addNewHabit.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        addNewHabit.setTitleColor(.whiteDay, for: .normal)
+        addNewHabit.setTitleColor(.yWhite, for: .normal)
         addNewHabit.layer.cornerRadius = 16
-        addNewHabit.backgroundColor = .ypBlackDay
+        addNewHabit.backgroundColor = .yBlack
         addNewHabit.addTarget(self, action: #selector(didTapCreateNewHabit), for: .touchUpInside)
         return addNewHabit
     }()
     
     private lazy var irregularEvent: UIButton = {
         let irregularEvent = UIButton(type: .custom)
-        irregularEvent.setTitle("Нерегулярные события", for: .normal)
+        irregularEvent.setTitle("events".localized(), for: .normal)
         irregularEvent.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        irregularEvent.setTitleColor(.ypWhiteDay, for: .normal)
+        irregularEvent.setTitleColor(.yWhite, for: .normal)
         irregularEvent.layer.cornerRadius = 16
-        irregularEvent.backgroundColor = .ypWhiteNight
+        irregularEvent.backgroundColor = .yBlack
         irregularEvent.addTarget(self, action: #selector(didTapCreateNewIrregularEvent), for: .touchUpInside)
         return irregularEvent
     }()
@@ -65,11 +58,12 @@ final class SelectTypeTrackerViewController: UIViewController {
     
     // MARK: - private Methods
     private func setupView() {
-        view.backgroundColor = .ypBlackNight
+        view.backgroundColor = .yWhite
         
-        navigationItem.title = "Создание трекера"
+        navigationItem.title = "create_tracker".localized()
         
-        [stackView, addNewHabit, irregularEvent].forEach { view in
+        [stackView, addNewHabit, irregularEvent].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
         }
         

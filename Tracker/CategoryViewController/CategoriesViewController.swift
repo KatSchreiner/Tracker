@@ -1,10 +1,3 @@
-//
-//  CategoriesViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 08.08.2024.
-//
-
 import UIKit
 
 protocol CategoryViewControllerDelegate: AnyObject {
@@ -23,18 +16,20 @@ final class CategoriesViewController: UIViewController {
         tableView.rowHeight = 75
         tableView.layer.cornerRadius = 16
         tableView.backgroundColor = .clear
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.isScrollEnabled = false
+        tableView.separatorColor = .yGray
+        tableView.tableHeaderView = UIView()
         tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.identifier)
         return tableView
     }()
     
     private lazy var addNewCategoryButton: UIButton = {
         let addNewCategoryButton = UIButton(type: .custom)
-        addNewCategoryButton.setTitle("Добавить категорию", for: .normal)
-        addNewCategoryButton.setTitleColor(.ypWhiteDay, for: .normal)
-        addNewCategoryButton.backgroundColor = .ypWhiteNight
+        addNewCategoryButton.setTitle("add_category".localized(), for: .normal)
+        addNewCategoryButton.setTitleColor(.yWhite, for: .normal)
+        addNewCategoryButton.backgroundColor = .yBlack
         addNewCategoryButton.layer.cornerRadius = 16
         addNewCategoryButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         addNewCategoryButton.addTarget(self, action: #selector(didTapAddCategory), for: .touchUpInside)
@@ -43,9 +38,9 @@ final class CategoriesViewController: UIViewController {
     
     private lazy var label: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = "no_categories".localized()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .ypWhiteNight
+        label.textColor = .yBlack
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -86,11 +81,12 @@ final class CategoriesViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupView() {
-        view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .yWhite
         navigationItem.hidesBackButton = true
-        title = "Категория"
+        title = "category".localized()
         
-        [tableView, addNewCategoryButton, placeholderStackView].forEach { view in
+        [tableView, addNewCategoryButton, placeholderStackView].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
@@ -106,7 +102,6 @@ final class CategoriesViewController: UIViewController {
         viewModel.onPlaceholderStateChanged = { [weak self] showPlaceholder in
             self?.tableView.isHidden = showPlaceholder
             self?.placeholderStackView.isHidden = !showPlaceholder
-            
         }
     }
     
@@ -121,12 +116,13 @@ final class CategoriesViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            tableView.bottomAnchor.constraint(equalTo: addNewCategoryButton.topAnchor, constant: -16),
+            tableView.bottomAnchor.constraint(equalTo: addNewCategoryButton.topAnchor, constant: 16),
             placeholderImage.heightAnchor.constraint(equalToConstant: 80),
             placeholderImage.widthAnchor.constraint(equalToConstant: 80),
             placeholderStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             placeholderStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             placeholderStackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            placeholderStackView.widthAnchor.constraint(equalToConstant: 343),
             addNewCategoryButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor,constant: 20),
             addNewCategoryButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor,constant: -20),
             addNewCategoryButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -144,7 +140,7 @@ extension CategoriesViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.identifier, for: indexPath) as! CategoryCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.identifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
         
         cell.textLabel?.text = viewModel.category(at: indexPath.row)
         cell.selectionStyle = .none
@@ -171,21 +167,16 @@ extension CategoriesViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        guard let cell = cell as? CategoryCell else { return }
+        
         let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
         
-        if numberOfRows > 0 {
-            if indexPath.row == 0 {
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                cell.layer.masksToBounds = true
-            } else if indexPath.row == numberOfRows - 1 {
-                cell.layer.cornerRadius = 16
-                cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                cell.layer.masksToBounds = true
-            } else {
-                cell.layer.cornerRadius = 0
-                cell.layer.masksToBounds = true
-            }
+        if numberOfRows == 1 {
+            cell.configCell(isSingleCell: true, isFirstCell: false, isLastCell: false)
+        } else {
+            let isFirstCell = indexPath.row == 0
+            let isLastCell = indexPath.row == numberOfRows - 1
+            cell.configCell(isSingleCell: false, isFirstCell: isFirstCell, isLastCell: isLastCell)
         }
     }
 }

@@ -1,10 +1,3 @@
-//
-//  CategoryCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 08.08.2024.
-//
-
 import UIKit
 
 final class CategoryCell: UITableViewCell {
@@ -30,11 +23,30 @@ final class CategoryCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(label)
         
-        backgroundColor = .ypLightGray
+        backgroundColor = .yBackground
         
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
             label.centerYAnchor.constraint(equalTo: self.centerYAnchor)
         ])
+    }
+    
+    func configCell(isSingleCell: Bool, isFirstCell: Bool, isLastCell: Bool) {
+        layer.cornerRadius = 0
+        layer.maskedCorners = []
+        separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+
+        if isSingleCell {
+            separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: bounds.width)
+            layer.cornerRadius = 16
+            layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else if isFirstCell {
+            layer.cornerRadius = 16
+            layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        } else if isLastCell {
+            separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: bounds.width)
+            layer.cornerRadius = 16
+            layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        }
     }
 }

@@ -1,10 +1,3 @@
-//
-//  WeekDay.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 10.07.2024.
-//
-
 import Foundation
 
 enum WeekDay: String, CaseIterable, Codable {
@@ -21,19 +14,38 @@ extension WeekDay {
     var fullName: String {
         switch self {
         case .monday:
-            return "Понедельник"
+            return "weekday_monday".localized()
         case .tuesday:
-            return "Вторник"
+            return "weekday_tuesday".localized()
         case .wednesday:
-            return "Среда"
+            return "weekday_wednesday".localized()
         case .thursday:
-            return "Четверг"
+            return "weekday_thursday".localized()
         case .friday:
-            return "Пятница"
+            return "weekday_friday".localized()
         case .saturday:
-            return "Суббота"
+            return "weekday_saturday".localized()
         case .sunday:
-            return "Воскресенье"
+            return "weekday_sunday".localized()
+        }
+    }
+    
+    var shortName: String {
+        switch self {
+        case .monday:
+            return "mon".localized()
+        case .tuesday:
+            return "tue".localized()
+        case .wednesday:
+            return "wed".localized()
+        case .thursday:
+            return  "thu".localized()
+        case .friday:
+            return "fri".localized()
+        case .saturday:
+            return "sat".localized()
+        case .sunday:
+            return "sun".localized()
         }
     }
 }

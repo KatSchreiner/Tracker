@@ -1,10 +1,3 @@
-//
-//  TrackerStore.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.07.2024.
-//
-
 import CoreData
 import UIKit
 
@@ -44,7 +37,9 @@ final class TrackerStore: NSObject {
     
     // MARK: - Initializers
     convenience override init() {
-        self.init(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("Невозможно привести UIApplication.shared.delegate к AppDelegate") }
+                
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
     
     init(context: NSManagedObjectContext) {
@@ -54,10 +49,65 @@ final class TrackerStore: NSObject {
     
     // MARK: - Public Methods
     func saveTrackerToCoreData(tracker: Tracker, category: String) throws {
-        let categoryData = try fetchCategoryByTitle(title: category)
-        let trackerCoreData = createTrackerCoreData(from: tracker, category: categoryData)
+        do {
+            let categoryData = try fetchCategoryByTitle(title: category)
+            let trackerCoreData = createTrackerCoreData(from: tracker, category: categoryData)
+            
+            try context.save()
+            print("Tracker saved: \(tracker)")
+        } catch {
+            print("Ошибка сохранения: \(error)")
+        }
+    }
+    
+    func deleteTrackerFromCoreData(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        let trackerRecordStore = TrackerRecordStore(context: context)
         
-        try context.save()
+        let fetchRequest: NSFetchRequest<TrackerRecordCoreData> = TrackerRecordCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "trackerId == %@", id as CVarArg)
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for record in results {
+                context.delete(record)
+            }
+            try context.save()
+            print("Трекер с id: \(id) и все связанные записи успешно удалены из Core Data.")
+            NotificationCenter.default.post(name: NSNotification.Name("TrackerCompletionUpdated"), object: nil)
+        } catch {
+            context.rollback()
+            throw TrackerStoreError.fetchTrackerByIdError(description: "Ошибка при удалении записи трекера: \(error.localizedDescription)")
+        }
+        
+        context.delete(trackerCoreData)
+        do {
+            try context.save()
+            print("Трекер с id: \(id) успешно удален из Core Data.")
+        } catch {
+            context.rollback()
+            print("Не удалось сохранить изменения. Ошибка: \(error.localizedDescription)")
+        }
+    }
+    
+    func updateTracker(_ tracker: Tracker, _ category: String) throws {
+        let existingTracker = try fetchTrackerById(id: tracker.id)
+        
+        existingTracker.name = tracker.name
+        existingTracker.emoji = tracker.emoji
+        existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
+        existingTracker.schedule = weekDayTransformer.transformedValue(tracker.schedule) as? NSObject
+        
+        let existingCategory = try fetchCategoryByTitle(title: category)
+        existingTracker.category = existingCategory
+        
+        do {
+            try context.save()
+            print("Трекер с id: \(tracker.id) успешно обновлен в Core Data.")
+        } catch {
+            context.rollback()
+            throw TrackerStoreError.fetchTrackerByIdError(description: "Не удалось обновить трекер. Ошибка: \(error.localizedDescription)")
+        }
     }
     
     func fetchTrackerById(id: UUID) throws -> TrackerCoreData {
@@ -82,7 +132,7 @@ final class TrackerStore: NSObject {
         }
         
         let colorConverted = UIColorMarshalling.color(from: color)
-        let schedule = weekDayTransformer.reverseTransformedValue(trackerCoreData.schedule) as! [WeekDay]
+        guard let schedule = weekDayTransformer.reverseTransformedValue(trackerCoreData.schedule) as? [WeekDay] else { throw TrackerStoreError.fetchTracker(description: "Трекер имеет неверный формат расписания")}
         
         return Tracker(
             id: id,
@@ -90,7 +140,9 @@ final class TrackerStore: NSObject {
             color: colorConverted,
             emoji: emoji,
             schedule: schedule,
-            typeTracker: .habit)
+            typeTracker: .habit, 
+            isPinned: false
+        )
     }
     
     // MARK: - Private Methods
@@ -106,9 +158,21 @@ final class TrackerStore: NSObject {
         trackerCoreData.color = UIColorMarshalling.hexString(from: tracker.color)
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.schedule = weekDayTransformer.transformedValue(tracker.schedule) as? NSObject
-        trackerCoreData.category = category // Связать с категорией
+        trackerCoreData.category = category 
         
         return trackerCoreData
+    }
+    
+    func pinTracker(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        trackerCoreData.isPinned = true
+        try context.save()
+    }
+    
+    func unpinTracker(id: UUID) throws {
+        let trackerCoreData = try fetchTrackerById(id: id)
+        trackerCoreData.isPinned = false
+        try context.save()
     }
 }
 

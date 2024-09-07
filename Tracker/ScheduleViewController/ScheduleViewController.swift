@@ -1,10 +1,3 @@
-//
-//  ScheduleTrackerViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 25.06.2024.
-//
-
 import UIKit
 
 class ScheduleViewController: UIViewController {
@@ -19,21 +12,25 @@ class ScheduleViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .ypLightGray
         tableView.layer.cornerRadius = 16
         tableView.delegate = self
         tableView.dataSource = self
         tableView.allowsSelection = false
         tableView.isScrollEnabled = false
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorColor = .yGray
+        tableView.frame = .zero
+        tableView.tableFooterView = UIView()
+        tableView.tableHeaderView = UIView()
         tableView.register(ScheduleTableCell.self, forCellReuseIdentifier: ScheduleTableCell.cell)
         return tableView
     }()
     
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton(type: .custom)
-        doneButton.setTitle("Готово", for: .normal)
-        doneButton.setTitleColor(.ypWhiteDay, for: .normal)
-        doneButton.backgroundColor = .ypWhiteNight
+        doneButton.setTitle("done".localized(), for: .normal)
+        doneButton.setTitleColor(.yWhite, for: .normal)
+        doneButton.backgroundColor = .yBlack
         doneButton.layer.cornerRadius = 16
         doneButton.addTarget(self, action: #selector(didTapDoneButton), for: .touchUpInside)
         return doneButton
@@ -62,29 +59,24 @@ class ScheduleViewController: UIViewController {
     
     // MARK: Private Methods
     private func setupView() {
-        [tableView, doneButton].forEach { view in
+        [tableView, doneButton].forEach { [weak self] view in
+            guard let self = self else { return }
             view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
-        view.backgroundColor = .ypWhiteDay
+        view.backgroundColor = .yWhite
         navigationItem.hidesBackButton = true
-        self.title = "Расписание"
+        self.title = "schedule".localized()
         
-        addConstraintScheduleTableView()
-        addConstraintDoneButton()
+        addConstraint()
     }
     
-    private func addConstraintScheduleTableView() {
+    private func addConstraint() {
         NSLayoutConstraint.activate([
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             tableView.heightAnchor.constraint(equalToConstant: 525),
-        ])
-    }
-    
-    private func addConstraintDoneButton() {
-        NSLayoutConstraint.activate([
             doneButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             doneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             doneButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -93,15 +85,14 @@ class ScheduleViewController: UIViewController {
     }
     
     private func configureCell(cell: ScheduleTableCell, indexPath: IndexPath) {
-        cell.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
-        cell.backgroundColor = .ypLightGray
-        
+        cell.backgroundColor = .yBackground
         let weekDay = weekDays[indexPath.row]
         cell.textLabel?.text = weekDay.fullName
         cell.daySwitch.addTarget(self, action: #selector(switchDidChange(_:)), for: .valueChanged)
         cell.daySwitch.tag = indexPath.row
         
         cell.daySwitch.setOn(selectedDays.contains(weekDay), animated: true)
+        
         
     }
 }
@@ -113,7 +104,7 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableCell.cell, for: indexPath) as! ScheduleTableCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ScheduleTableCell.cell, for: indexPath) as? ScheduleTableCell else { return UITableViewCell() }
         
         configureCell(cell: cell, indexPath: indexPath)
         
@@ -124,7 +115,9 @@ extension ScheduleViewController: UITableViewDelegate, UITableViewDataSource {
         return 75
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+        
+        cell.setSeparatorInset(forRowAt: indexPath, totalRows: numberOfRows)
     }
 }

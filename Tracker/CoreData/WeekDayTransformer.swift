@@ -1,10 +1,3 @@
-//
-//  WeekDayTransformer.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 28.07.2024.
-//
-
 import Foundation
 
 @objc

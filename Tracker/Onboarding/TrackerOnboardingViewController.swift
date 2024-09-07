@@ -1,10 +1,3 @@
-//
-//  TrackerOnboardingViewController.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 02.08.2024.
-//
-
 import UIKit
 
 final class TrackerOnboardingViewController: UIPageViewController {
@@ -19,12 +12,12 @@ final class TrackerOnboardingViewController: UIPageViewController {
         
         let pageFirst = SinglePageViewController(
             background: imageFirst,
-            title: "Отслеживайте только то, что хотите"
+            title: "pagFirst".localized()
         )
         
         let pageTwo = SinglePageViewController(
             background: imageTwo,
-            title: "Даже если это не литры воды и йога"
+            title: "pageTwo".localized()
         )
         
         return [pageFirst, pageTwo]
@@ -34,8 +27,8 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let pc = UIPageControl()
         pc.numberOfPages = pages.count
         pc.currentPage = 0
-        pc.currentPageIndicatorTintColor = .ypWhiteNight
-        pc.pageIndicatorTintColor = .ypGray
+        pc.currentPageIndicatorTintColor = .black
+        pc.pageIndicatorTintColor = .yGray
         pc.translatesAutoresizingMaskIntoConstraints = false
         return pc
     }()
@@ -44,8 +37,9 @@ final class TrackerOnboardingViewController: UIPageViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
-        button.backgroundColor = .ypWhiteNight
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.backgroundColor = .black
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle("technologies".localized(), for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(openMainScreen), for: .touchUpInside)
         return button

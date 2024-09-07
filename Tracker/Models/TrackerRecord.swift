@@ -1,10 +1,3 @@
-//
-//  TrackerRecord.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 23.06.2024.
-//
-
 import Foundation
 
 struct TrackerRecord {

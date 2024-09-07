@@ -1,10 +1,3 @@
-//
-//  ScheduleTableCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 28.06.2024.
-//
-
 import UIKit
 
 class ScheduleTableCell: UITableViewCell {
@@ -13,7 +6,7 @@ class ScheduleTableCell: UITableViewCell {
     lazy var daySwitch: UISwitch = {
         let daySwitch = UISwitch()
         daySwitch.setOn(false, animated: true)
-        daySwitch.onTintColor = .ypBlue
+        daySwitch.onTintColor = .yBlue
         return daySwitch
     }()
     

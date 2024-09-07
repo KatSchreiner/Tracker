@@ -1,10 +1,3 @@
-//
-//  EmojiesCollectionViewCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 02.07.2024.
-//
-
 import UIKit
 
 final class EmojiesCollectionViewCell: UICollectionViewCell {
@@ -20,7 +13,7 @@ final class EmojiesCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             self.layer.cornerRadius = 8
-            self.backgroundColor = self.isSelected ? .ypLightGray : .clear
+            self.backgroundColor = self.isSelected ? .yLightGray : .clear
         }
     }
     

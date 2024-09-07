@@ -1,10 +1,3 @@
-//
-//  TrackerRecordStore.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.07.2024.
-//
-
 import CoreData
 import UIKit
 
@@ -45,7 +38,9 @@ final class TrackerRecordStore: NSObject {
     
     // MARK: - Initializers
     convenience override init() {
-        self.init(context: (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext)
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { fatalError("Невозможно привести UIApplication.shared.delegate к AppDelegate") }
+        
+        self.init(context: appDelegate.persistentContainer.viewContext)
     }
     
     init(context: NSManagedObjectContext) {
@@ -79,20 +74,21 @@ final class TrackerRecordStore: NSObject {
         fetchRequest.predicate = NSPredicate(format: "trackerId == %@ AND date == %@", trackerId as CVarArg, date as CVarArg)
         
         do {
-            let records = try context.fetch(fetchRequest)
-            for record in records {
-                context.delete(record)
+            let results = try context.fetch(fetchRequest)
+            if let trackerRecordCoreData = results.first {
+                context.delete(trackerRecordCoreData)
+                try context.save()
+            } else {
+                throw TrackerRecordStoreError.removeRecordFromCompletedTrackersError(description: "Не удалось найти запись трекера для удаления")
             }
-            try context.save()
-            
         } catch {
-            throw TrackerRecordStoreError.removeRecordFromCompletedTrackersError(description: "Ошибка удаления записи трекера")
+            throw TrackerRecordStoreError.removeRecordFromCompletedTrackersError(description: "Ошибка при удалении записи трекера: \(error.localizedDescription)")
         }
     }
     
     // MARK: - Private Methods
     private func fetchTrackerRecord(from trackerRecordCoreData: TrackerRecordCoreData) throws -> TrackerRecord {
-        guard 
+        guard
             let id = trackerRecordCoreData.trackerId,
             let date = trackerRecordCoreData.date
         else {
@@ -101,7 +97,7 @@ final class TrackerRecordStore: NSObject {
         return TrackerRecord(trackerId: id, date: date)
     }
     
-    private func fetchAllTrackersRecord() -> [TrackerRecord] {
+    func fetchAllTrackersRecord() -> [TrackerRecord] {
         guard let trackerRecordsCoreData = fetchedResultsController.fetchedObjects else { return [] }
         return trackerRecordsCoreData.compactMap { try? fetchTrackerRecord(from: $0) }
     }

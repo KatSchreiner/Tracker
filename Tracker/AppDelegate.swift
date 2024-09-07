@@ -1,12 +1,6 @@
-//
-//  AppDelegate.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 20.06.2024.
-//
-
 import UIKit
 import CoreData
+import YandexMobileMetrica
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,6 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = MainTabBarController()
         window?.makeKeyAndVisible()
 
+        guard let configuration = YMMYandexMetricaConfiguration(apiKey: "124cf1e4-8663-40d8-bf8c-8de7cb88230d") else {
+            return true
+        }
+        
+        YMMYandexMetrica.activate(with: configuration)
+        
         return true
     }
 
@@ -59,4 +59,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 }
-

@@ -1,10 +1,3 @@
-//
-//  CreateNewCategoryCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 04.07.2024.
-//
-
 import UIKit
 
 protocol CreateNewCategoryCellDelegate: AnyObject {
@@ -20,19 +13,24 @@ final class CreateNewCategoryCell: UICollectionViewCell {
     weak var weekDaysDelegate: SelectedWeekDaysDelegate?
     weak var navigationController: UINavigationController?
     
-    var selectedWeekDays = [WeekDay]()
+    var selectedWeekDays = [WeekDay]() {
+        didSet {
+            weekDaysDelegate?.sendSelectedWeekDays(selectedWeekDays)
+        }
+    }
+    
     var selectedCategory = "" {
         didSet {
             delegate?.categorySelected(selectedCategory)
         }
     }
-        
+    
     var typeTracker: TypeTracker?
-        
+    
     var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .singleLine
-        tableView.separatorColor = .ypGray
+        tableView.separatorColor = .yGray
         tableView.separatorInset = .init(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layer.cornerRadius = 16
         tableView.frame = .zero
@@ -85,9 +83,10 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellNewTracker")
         
         cell.accessoryType = .disclosureIndicator
-        cell.backgroundColor = .ypLightGray
+        cell.backgroundColor = .yBackground
         cell.detailTextLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.detailTextLabel?.textColor = .ypGray
+        cell.detailTextLabel?.textColor = .yGray
+        cell.selectionStyle = .none
         
         guard let typeTracker = typeTracker else { return UITableViewCell() }
         
@@ -97,27 +96,27 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
             switch section {
             case .category:
                 cell.detailTextLabel?.text = selectedCategory
-                cell.textLabel?.text = "Категория"
+                cell.textLabel?.text = "category".localized()
             case .schedule:
-                cell.textLabel?.text = "Расписание"
+                cell.textLabel?.text = "schedule".localized()
                 if selectedWeekDays.count == 7 {
-                    cell.detailTextLabel?.text = "Каждый день"
+                    cell.detailTextLabel?.text = "every_day".localized()
                 } else {
                     cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                     
-                    let selectedDaysText = selectedWeekDays.map { $0.rawValue }.joined(separator: ", ")
+                    let selectedDaysText = selectedWeekDays.map { $0.shortName }.joined(separator: ", ")
                     cell.detailTextLabel?.text = selectedDaysText
                 }
             default:
                 return UITableViewCell()
             }
         } else {
-            cell.textLabel?.text = "Категория"
+            cell.textLabel?.text = "category".localized()
             cell.layer.cornerRadius = 16
             cell.detailTextLabel?.text = selectedCategory
         }
         return cell
-}
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -145,19 +144,25 @@ extension CreateNewCategoryCell: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let numberOfRows = tableView.numberOfRows(inSection: indexPath.section)
+
+        cell.setSeparatorInset(forRowAt: indexPath, totalRows: numberOfRows)
+    }
 }
 
 // MARK: - ScheduleViewControllerDelegate
 extension CreateNewCategoryCell: ScheduleViewControllerDelegate {
     func sendSelectedDays(selectedDays: [WeekDay]) {
         self.selectedWeekDays = selectedDays
-
+        
         weekDaysDelegate?.sendSelectedWeekDays(selectedDays)
-
+        
         if selectedDays.count == 7 {
-            tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "Каждый день"
+            tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = "every_day".localized()
         } else {
-            let selectedDaysText = selectedDays.map { $0.rawValue }.joined(separator: ", ")
+            let selectedDaysText = selectedDays.map { $0.shortName }.joined(separator: ", ")
             tableView.cellForRow(at: IndexPath(row: 1, section: 0))?.detailTextLabel?.text = selectedDaysText
         }
         tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .automatic)

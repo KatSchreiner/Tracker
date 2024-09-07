@@ -1,10 +1,3 @@
-//
-//  CategoryViewModel.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 04.08.2024.
-//
-
 import Foundation
 
 final class CategoriesViewModel {

@@ -1,10 +1,3 @@
-//
-//  CollectionViewCell.swift
-//  Tracker
-//
-//  Created by Екатерина Шрайнер on 24.06.2024.
-//
-
 import UIKit
 
 class TrackerCollectionViewCell: UICollectionViewCell {
@@ -24,7 +17,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var titleLabelCell: UILabel = {
         let titleLabelCell = UILabel()
         titleLabelCell.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        titleLabelCell.textColor = .ypWhiteDay
+        titleLabelCell.textColor = .white
         return titleLabelCell
     }()
     
@@ -37,7 +30,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var emojiCircle: UIView = {
         let emojiCircle = UIView()
         emojiCircle.layer.cornerRadius = 12
-        emojiCircle.backgroundColor = .ypBackgroundDay
+        emojiCircle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return emojiCircle
     }()
     
@@ -50,7 +43,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     lazy var addButtonCell: UIButton = {
         let addButtonCell = UIButton()
         addButtonCell.layer.cornerRadius = 17
-        addButtonCell.tintColor = .ypWhiteDay
+        addButtonCell.tintColor = .yWhite
         addButtonCell.addTarget(self, action: #selector(didTapCompletedTrackers), for: .touchUpInside)
         return addButtonCell
     }()
@@ -59,6 +52,14 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         let bodyView = UIView()
         bodyView.layer.cornerRadius = 16
         return bodyView
+    }()
+    
+    lazy var pinIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "pin.square")
+        imageView.tintColor = .yWhite
+        imageView.isHidden = true
+        return imageView
     }()
     
     // MARK: - Private Properties
@@ -86,7 +87,7 @@ class TrackerCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configureAddButton(tracker: Tracker, indexPath: IndexPath, completedForCurrentDate: Int, isTrackerCompleted: Bool, typeTracker: TypeTracker) {
+    func configureAddButton(tracker: Tracker, indexPath: IndexPath, completedForCurrentDate: Int, isTrackerCompleted: Bool, typeTracker: TypeTracker, isPinned: Bool) {
         self.isTrackerCompleted = isTrackerCompleted
         self.trackerId = tracker.id
         self.indexPath = indexPath
@@ -97,22 +98,17 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         addButtonCell.backgroundColor = tracker.color
         daysCount = completedForCurrentDate
         
+        pinIcon.isHidden = !isPinned
+        
         let image = isTrackerCompleted ? "checkmark" : "plus"
         addButtonCell.setImage(UIImage(systemName: image), for: .normal)
         addButtonCell.backgroundColor = isTrackerCompleted ? bodyView.backgroundColor?.withAlphaComponent(0.3) : bodyView.backgroundColor
     }
     
     func updateDaysCountLabel() {
-        var days: String
-        switch daysCount % 10 {
-        case 1:
-            days = "день"
-        case 2, 3, 4:
-            days = "дня"
-        default:
-            days = "дней"
-        }
-        daysCountLabelCell.text = String(daysCount) + " " + days
+        let formatString = NSLocalizedString("numberOfDays", comment: "")
+        let daysString = String.localizedStringWithFormat(formatString, daysCount)
+        daysCountLabelCell.text = daysString
     }
     
     // MARK: - Private Methods    
@@ -134,6 +130,9 @@ class TrackerCollectionViewCell: UICollectionViewCell {
         
         contentView.addSubview(bodyView)
         bodyView.translatesAutoresizingMaskIntoConstraints = false
+        
+        bodyView.addSubview(pinIcon)
+        pinIcon.translatesAutoresizingMaskIntoConstraints = false
         
         addConstraintView()
     }
@@ -158,7 +157,9 @@ class TrackerCollectionViewCell: UICollectionViewCell {
             addButtonCell.widthAnchor.constraint(equalToConstant: 34),
             bodyView.heightAnchor.constraint(equalToConstant: 90),
             bodyView.widthAnchor.constraint(equalToConstant: contentView.frame.width),
-            bodyView.topAnchor.constraint(equalTo: topAnchor)
+            bodyView.topAnchor.constraint(equalTo: topAnchor),
+            pinIcon.topAnchor.constraint(equalTo: bodyView.topAnchor, constant: 12),
+            pinIcon.trailingAnchor.constraint(equalTo: bodyView.trailingAnchor, constant: -12)
         ])
     }
 }
